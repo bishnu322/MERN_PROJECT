@@ -5,6 +5,7 @@ import {
   CustomError,
   errorHandler,
 } from "./middlewares/errorHandler.middleware";
+import authRouter from "./routers/auth.routes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,9 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.get("/", (req: Request, res: Response) => {
   res.send("server is up and running");
 });
+
+// routers
+app.use("/auth", authRouter);
 
 //* All error routes
 app.all("/{*all}", (req: Request, res: Response, next: NextFunction) => {
