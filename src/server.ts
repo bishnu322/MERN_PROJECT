@@ -1,7 +1,10 @@
 import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import { DB_CONNECTION } from "./config/db.config";
-import { errorHandler } from "./middlewares/errorHandler.middleware";
+import {
+  CustomError,
+  errorHandler,
+} from "./middlewares/errorHandler.middleware";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,7 +23,12 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 //* All error routes
-app.all("*", (req: Request, res: Response, next: NextFunction) => {});
+app.all("*", (req: Request, res: Response, next: NextFunction) => {
+  const message = `cannot ${req.method} on path ${req.originalUrl}`;
+  const error = new CustomError(message, 404);
+
+  next(error);
+});
 
 // * errorHandler middleware called
 app.use(errorHandler);
