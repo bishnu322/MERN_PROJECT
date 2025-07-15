@@ -27,7 +27,7 @@ export const registerUser = async (
       data: user,
     });
   } catch (error) {
-    throw new CustomError("registration error", 400);
+    next("registration error");
   }
 };
 
@@ -70,10 +70,81 @@ export const login = async (
       data: user,
     });
   } catch (error) {
-    next(error);
+    next("login error");
   }
 };
 
 // forget password
 
+export const forgetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+    const update = password;
+
+    if (!email) {
+      throw new CustomError("email is required", 400);
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new CustomError("user is not found!", 400);
+    }
+
+    user.updateOne({ _id: user._id }, { $set: { password: password } });
+  } catch (error) {
+    next("forget error");
+  }
+};
+
 // change password
+
+export const changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, old_password, new_password } = req.body;
+
+    if (!new_password) {
+      throw new CustomError("new password is not registered..", 400);
+    }
+
+    if (!old_password) {
+      throw new CustomError("old password is not registered..", 400);
+    }
+
+    if (!email) {
+      throw new CustomError("email is required", 400);
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new CustomError("Something went wrong!!!", 500);
+    }
+
+    const isPasswordMatch = user.password === old_password;
+
+    if (!isPasswordMatch) {
+      throw new CustomError("password does not match", 400);
+    }
+
+    user.password = new_password;
+
+    await user.save();
+
+    res.status(201).json({
+      message: "password changed successfully",
+      status: "success",
+      success: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
