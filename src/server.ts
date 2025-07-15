@@ -23,16 +23,16 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 //* All error routes
-app.all("*", (req: Request, res: Response, next: NextFunction) => {
+app.all("/{*all}", (req: Request, res: Response, next: NextFunction) => {
   const message = `cannot ${req.method} on path ${req.originalUrl}`;
   const error = new CustomError(message, 404);
 
   next(error);
 });
 
-// * errorHandler middleware called
-app.use(errorHandler);
-
 app.listen(PORT, () => {
   console.log(`Server is listening on port http://localhost:${PORT}`);
 });
+
+// * errorHandler middleware called
+app.use(errorHandler);
