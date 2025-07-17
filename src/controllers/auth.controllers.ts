@@ -1,15 +1,12 @@
 import { compareHash, hashPassword } from "./../utils/bcrypt.utils";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { CustomError } from "../middlewares/errorHandler.middleware";
 import { User } from "../models/user.models";
+import { asyncHandler } from "../utils/asyncHandler_utils";
 
 // registration
-export const registerUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+export const registerUser = asyncHandler(
+  async (req: Request, res: Response) => {
     const { first_name, last_name, email, password, phone_number } = req.body;
 
     const user: any = await User.create({
@@ -34,90 +31,69 @@ export const registerUser = async (
       success: true,
       data: user,
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
 // login
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    //access email password
-    const { email, password } = req.body;
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  //access email password
+  const { email, password } = req.body;
 
-    if (!email) {
-      throw new CustomError("email is required", 400);
-    }
-
-    if (!password) {
-      throw new CustomError("password is required", 400);
-    }
-    //find user by email
-    const user: any = await User.findOne({ email }).select("+password");
-
-    if (!user) {
-      throw new CustomError("Invalid credential", 400);
-    }
-
-    const isPassMatch = await compareHash(password, user.password ?? "");
-
-    if (!isPassMatch) {
-      throw new CustomError("Invalid credential", 400);
-    }
-
-    const { password: pass, ...loggedInUser } = user._doc;
-
-    res.status(200).json({
-      message: "get succeeded",
-      status: "success",
-      success: true,
-      data: loggedInUser,
-    });
-  } catch (error) {
-    next("login error");
+  if (!email) {
+    throw new CustomError("email is required", 400);
   }
-};
+
+  if (!password) {
+    throw new CustomError("password is required", 400);
+  }
+  //find user by email
+  const user: any = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    throw new CustomError("Invalid credential", 400);
+  }
+
+  const isPassMatch = await compareHash(password, user.password ?? "");
+
+  if (!isPassMatch) {
+    throw new CustomError("Invalid credential", 400);
+  }
+
+  const { password: pass, ...loggedInUser } = user._doc;
+
+  res.status(200).json({
+    message: "get succeeded",
+    status: "success",
+    success: true,
+    data: loggedInUser,
+  });
+});
 
 // forget password
+// export const forgetPassword = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const { email, password } = req.body;
+//     const update = password;
 
-export const forgetPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, password } = req.body;
-    const update = password;
+//     if (!email) {
+//       throw new CustomError("email is required", 400);
+//     }
 
-    if (!email) {
-      throw new CustomError("email is required", 400);
-    }
+//     const user = await User.findOne({ email });
 
-    const user = await User.findOne({ email });
+//     if (!user) {
+//       throw new CustomError("user is not found!", 400);
+//     }
 
-    if (!user) {
-      throw new CustomError("user is not found!", 400);
-    }
-
-    user.updateOne({ _id: user._id }, { $set: { password: password } });
-  } catch (error) {
-    next("forget error");
-  }
-};
+//     user.updateOne({ _id: user._id }, { $set: { password: password } });
+//   }
+// );
 
 // change password
 
-export const changePassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+export const changePassword = asyncHandler(
+  async (req: Request, res: Response) => {
     const { email, old_password, new_password } = req.body;
 
     if (!new_password) {
@@ -153,7 +129,5 @@ export const changePassword = async (
       status: "success",
       success: true,
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
