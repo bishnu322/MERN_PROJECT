@@ -1,4 +1,4 @@
-import { hashPassword } from "./../utils/bcrypt.utils";
+import { compareHash, hashPassword } from "./../utils/bcrypt.utils";
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "../middlewares/errorHandler.middleware";
 import { User } from "../models/user.models";
@@ -10,16 +10,14 @@ export const registerUser = async (
   next: NextFunction
 ) => {
   try {
-    const { first_name, last_name, email, password, phone_number, role } =
-      req.body;
+    const { first_name, last_name, email, password, phone_number } = req.body;
 
-    const user = await User.create({
+    const user: any = await User.create({
       first_name,
       last_name,
-      email,
-      phone_number,
-      role,
       password,
+      phone_number,
+      email,
     });
 
     const hashedPassword = await hashPassword(password);
@@ -28,6 +26,8 @@ export const registerUser = async (
 
     await user.save();
 
+    const { password: pass, ...newUser } = user._doc;
+
     res.status(201).json({
       message: "registration succeeded",
       status: "success",
@@ -35,7 +35,7 @@ export const registerUser = async (
       data: user,
     });
   } catch (error) {
-    next("registration error");
+    next(error);
   }
 };
 
@@ -58,24 +58,25 @@ export const login = async (
       throw new CustomError("password is required", 400);
     }
     //find user by email
-    const user = await User.findOne({ email });
+    const user: any = await User.findOne({ email }).select("+password");
 
     if (!user) {
       throw new CustomError("Invalid credential", 400);
     }
 
-    //user.password ===password
-    const isPassMatch = user.password === password;
+    const isPassMatch = await compareHash(password, user.password ?? "");
 
     if (!isPassMatch) {
       throw new CustomError("Invalid credential", 400);
     }
 
+    const { password: pass, ...loggedInUser } = user._doc;
+
     res.status(200).json({
       message: "get succeeded",
       status: "success",
       success: true,
-      data: user,
+      data: loggedInUser,
     });
   } catch (error) {
     next("login error");
