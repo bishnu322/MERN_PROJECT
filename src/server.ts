@@ -6,6 +6,7 @@ import {
   errorHandler,
 } from "./middlewares/errorHandler.middleware";
 import authRouter from "./routers/auth.routes";
+import userRouter from "./routers/user.routers";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.get("/", (req: Request, res: Response) => {
 
 // routers
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 //* All error routes
 app.all("/{*all}", (req: Request, res: Response, next: NextFunction) => {
