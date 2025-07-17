@@ -1,3 +1,4 @@
+import { hashPassword } from "./../utils/bcrypt.utils";
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "../middlewares/errorHandler.middleware";
 import { User } from "../models/user.models";
@@ -11,6 +12,7 @@ export const registerUser = async (
   try {
     const { first_name, last_name, email, password, phone_number, role } =
       req.body;
+
     const user = await User.create({
       first_name,
       last_name,
@@ -19,6 +21,12 @@ export const registerUser = async (
       role,
       password,
     });
+
+    const hashedPassword = await hashPassword(password);
+
+    user.password = hashedPassword;
+
+    await user.save();
 
     res.status(201).json({
       message: "registration succeeded",
