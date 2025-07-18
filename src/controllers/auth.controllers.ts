@@ -1,8 +1,8 @@
 import { compareHash, hashPassword } from "./../utils/bcrypt.utils";
 import { Request, Response } from "express";
-import { CustomError } from "../middlewares/errorHandler.middleware";
+import { CustomError } from "../middlewares/error-handler.middleware";
 import { User } from "../models/user.models";
-import { asyncHandler } from "../utils/asyncHandler_utils";
+import { asyncHandler } from "../utils/async-handler.utils";
 
 // registration
 export const registerUser = asyncHandler(

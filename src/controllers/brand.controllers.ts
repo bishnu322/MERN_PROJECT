@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../utils/asyncHandler_utils";
+import { asyncHandler } from "../utils/async-handler.utils";
 import { Brand } from "../models/brand.models";
-import { CustomError } from "../middlewares/errorHandler.middleware";
+import { CustomError } from "../middlewares/error-handler.middleware";
 
 //* brand registration
 

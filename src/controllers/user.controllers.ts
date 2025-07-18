@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/user.models";
-import { CustomError } from "../middlewares/errorHandler.middleware";
-import { asyncHandler } from "../utils/asyncHandler_utils";
+import { CustomError } from "../middlewares/error-handler.middleware";
+import { asyncHandler } from "../utils/async-handler.utils";
 
 // get all users
 export const getAll = asyncHandler(async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../utils/asyncHandler_utils";
-import { CustomError } from "../middlewares/errorHandler.middleware";
+import { asyncHandler } from "../utils/async-handler.utils";
+import { CustomError } from "../middlewares/error-handler.middleware";
 import Category from "../models/category.models";
 
 //* register category

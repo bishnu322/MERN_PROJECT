@@ -4,7 +4,7 @@ import { DB_CONNECTION } from "./config/db.config";
 import {
   CustomError,
   errorHandler,
-} from "./middlewares/errorHandler.middleware";
+} from "./middlewares/error-handler.middleware";
 
 //* importing routes
 
