@@ -6,13 +6,12 @@ const brandSchema = new mongoose.Schema(
       type: String,
       required: [true, "Brand_name is required !"],
       trim: true,
-      unique: true,
+      unique: [true, "Brand name already exists"],
       maxLength: 50,
     },
     slug: {
       type: String,
       unique: true,
-      required: true,
     },
     description: {
       type: String,

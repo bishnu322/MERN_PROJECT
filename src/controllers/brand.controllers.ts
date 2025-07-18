@@ -22,10 +22,6 @@ export const registerBrand = asyncHandler(
       throw new CustomError("brand name is required !", 400);
     }
 
-    if (!slug) {
-      throw new CustomError("slug is required !", 400);
-    }
-
     if (!description) {
       throw new CustomError("Brand description is required !", 400);
     }
