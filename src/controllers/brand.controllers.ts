@@ -59,6 +59,26 @@ export const getAllBrand = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+//* updating brand
+
+export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+
+  if (!id) {
+    throw new CustomError("brand not found !", 400);
+  }
+
+  const brand = await Brand.findByIdAndUpdate({ _id: id }, { $set: payload });
+
+  res.status(200).json({
+    message: "brand updated successfully",
+    status: "Success",
+    success: true,
+    data: brand,
+  });
+});
+
 //* remove brand
 
 export const removeBrand = asyncHandler(async (req: Request, res: Response) => {

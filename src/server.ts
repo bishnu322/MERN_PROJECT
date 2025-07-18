@@ -5,9 +5,13 @@ import {
   CustomError,
   errorHandler,
 } from "./middlewares/errorHandler.middleware";
+
+//* importing routes
+
 import authRouter from "./routers/auth.routes";
 import userRouter from "./routers/user.routers";
 import brandRouter from "./routers/brand.routes";
+import categoryRouter from "./routers/category.routes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,9 +30,10 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // routers
-app.use("/auth", authRouter);
-app.use("/user", userRouter);
-app.use("/brand", brandRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/brand", brandRouter);
+app.use("/api/category", categoryRouter);
 
 //* All error routes
 app.all("/{*all}", (req: Request, res: Response, next: NextFunction) => {

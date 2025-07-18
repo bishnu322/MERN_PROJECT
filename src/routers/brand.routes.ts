@@ -4,13 +4,15 @@ import {
   getBrandById,
   registerBrand,
   removeBrand,
+  updateBrand,
 } from "../controllers/brand.controllers";
 
 const router = express.Router();
 
 router.get("/", getAllBrand);
+router.post("/", registerBrand);
 router.get("/:id", getBrandById);
-router.post("/registerBrand", registerBrand);
+router.put("/:id", updateBrand);
 router.delete("/:id", removeBrand);
 
 export default router;

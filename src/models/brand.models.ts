@@ -27,7 +27,7 @@ const brandSchema = new mongoose.Schema(
     },
     categories: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "category",
+      ref: "Category",
     },
     averageRating: {
       type: Number,
