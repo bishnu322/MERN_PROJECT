@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { compareHash, hashPassword } from "./../utils/bcrypt.utils";
 import { Request, Response } from "express";
 import { CustomError } from "../middlewares/error-handler.middleware";
@@ -29,7 +30,7 @@ export const registerUser = asyncHandler(
       message: "registration succeeded",
       status: "success",
       success: true,
-      data: user,
+      data: newUser,
     });
   }
 );
@@ -74,7 +75,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 // export const forgetPassword = asyncHandler(
 //   async (req: Request, res: Response) => {
 //     const { email, password } = req.body;
-//     const update = password;
+//
 
 //     if (!email) {
 //       throw new CustomError("email is required", 400);
@@ -90,7 +91,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 //   }
 // );
 
-// change password
+//* change password
 
 export const changePassword = asyncHandler(
   async (req: Request, res: Response) => {
@@ -114,7 +115,9 @@ export const changePassword = asyncHandler(
       throw new CustomError("Something went wrong!!!", 500);
     }
 
-    const isPasswordMatch = user.password === old_password;
+    // const isPasswordMatch = user.password === old_password;
+    // const isPasswordMatch = await bcrypt.compare(old_password, user.password);
+    const isPasswordMatch = compareHash(old_password, user.password);
 
     if (!isPasswordMatch) {
       throw new CustomError("password does not match", 400);
