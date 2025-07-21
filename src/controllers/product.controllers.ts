@@ -150,3 +150,7 @@ export const updateProduct = asyncHandler(
     });
   }
 );
+
+//*  get by category
+
+//*  get by brand

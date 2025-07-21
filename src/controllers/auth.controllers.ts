@@ -4,6 +4,8 @@ import { Request, Response } from "express";
 import { CustomError } from "../middlewares/error-handler.middleware";
 import { User } from "../models/user.models";
 import { asyncHandler } from "../utils/async-handler.utils";
+import { IJWTPayload } from "../types/global.types";
+import { generateToken } from "../utils/jwt.utils";
 
 // registration
 export const registerUser = asyncHandler(
@@ -61,13 +63,26 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError("Invalid credential", 400);
   }
 
+  const payload: IJWTPayload = {
+    _id: user._id,
+    role: user.role,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+  };
+
+  const access_token = generateToken(payload);
+
   const { password: pass, ...loggedInUser } = user._doc;
 
   res.status(200).json({
     message: "get succeeded",
     status: "success",
     success: true,
-    data: loggedInUser,
+    data: {
+      data: loggedInUser,
+      access_token,
+    },
   });
 });
 
