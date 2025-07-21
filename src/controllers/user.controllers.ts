@@ -56,5 +56,5 @@ export const removeUser = asyncHandler(async (req: Request, res: Response) => {
 
 // export const updateUser = asyncHandler(
 //   async (req: Request, res: Response, next: NextFunction) => {
-//     retunr
+//     return
 // );

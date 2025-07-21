@@ -75,15 +75,22 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   const { password: pass, ...loggedInUser } = user._doc;
 
-  res.status(200).json({
-    message: "get succeeded",
-    status: "success",
-    success: true,
-    data: {
-      data: loggedInUser,
-      access_token,
-    },
-  });
+  res
+    .cookie("access_token", access_token, {
+      secure: process.env.NODE_ENV === "development" ? false : true,
+      httpOnly: true,
+      maxAge: Number(process.env.COOKIE_EXPIRY) * 24 * 60 * 60 * 1000,
+    })
+    .status(200)
+    .json({
+      message: "get succeeded",
+      status: "success",
+      success: true,
+      data: {
+        data: loggedInUser,
+        access_token,
+      },
+    });
 });
 
 // forget password

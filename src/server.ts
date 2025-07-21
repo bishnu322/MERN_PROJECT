@@ -9,7 +9,7 @@ import {
 //* importing routes
 
 import authRouter from "./routers/auth.routes";
-import userRouter from "./routers/user.routers";
+import userRouter from "./routers/user.routes";
 import brandRouter from "./routers/brand.routes";
 import categoryRouter from "./routers/category.routes";
 import productRouter from "./routers/product.routes";
