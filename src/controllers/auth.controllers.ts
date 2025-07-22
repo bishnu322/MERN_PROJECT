@@ -93,25 +93,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
-// forget password
-// export const forgetPassword = asyncHandler(
-//   async (req: Request, res: Response) => {
-//     const { email, password } = req.body;
-//
-
-//     if (!email) {
-//       throw new CustomError("email is required", 400);
-//     }
-
-//     const user = await User.findOne({ email });
-
-//     if (!user) {
-//       throw new CustomError("user is not found!", 400);
-//     }
-
-//     user.updateOne({ _id: user._id }, { $set: { password: password } });
-//   }
-// );
+//*  forget password
 
 //* change password
 
