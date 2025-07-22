@@ -8,3 +8,11 @@ export interface IJWTPayload {
   first_name: string;
   last_name: string;
 }
+
+export interface IJWTDecodedPayload extends IJWTPayload {
+  exp: number;
+  iat: number;
+}
+
+export const allAdmin = [Role.ADMIN, Role.SUPER_ADMIN];
+export const users = [Role.USER];
