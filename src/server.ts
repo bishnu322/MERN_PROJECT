@@ -13,6 +13,7 @@ import userRouter from "./routers/user.routes";
 import brandRouter from "./routers/brand.routes";
 import categoryRouter from "./routers/category.routes";
 import productRouter from "./routers/product.routes";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,8 @@ DB_CONNECTION(DB_URI);
 //*  Using middlewares
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ limit: "5mb", extended: true }));
+//* using cookieParser
+app.use(cookieParser());
 
 // * Home route
 app.get("/", (req: Request, res: Response) => {

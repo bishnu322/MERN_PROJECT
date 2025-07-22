@@ -6,13 +6,15 @@ import {
   removeBrand,
   updateBrand,
 } from "../controllers/brand.controllers";
+import { authenticate } from "../middlewares/auth.middleware";
+import { allAdmin } from "../types/global.types";
 
 const router = express.Router();
 
 router.get("/", getAllBrand);
-router.post("/", registerBrand);
 router.get("/:id", getBrandById);
-router.put("/:id", updateBrand);
-router.delete("/:id", removeBrand);
+router.post("/", authenticate(allAdmin), registerBrand);
+router.put("/:id", authenticate(allAdmin), updateBrand);
+router.delete("/:id", authenticate(allAdmin), removeBrand);
 
 export default router;

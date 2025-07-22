@@ -6,13 +6,15 @@ import {
   removeCategory,
   updateCategory,
 } from "../controllers/category.controllers";
+import { authenticate } from "../middlewares/auth.middleware";
+import { allAdmin } from "../types/global.types";
 
 const router = express.Router();
 
 router.get("/", getAllCategory);
-router.post("/", registerCategory);
 router.get("/:id", getCategoryById);
-router.put("/:id", updateCategory);
-router.delete("/:id", removeCategory);
+router.post("/", authenticate(allAdmin), registerCategory);
+router.put("/:id", authenticate(allAdmin), updateCategory);
+router.delete("/:id", authenticate(allAdmin), removeCategory);
 
 export default router;

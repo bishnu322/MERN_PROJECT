@@ -6,13 +6,15 @@ import {
   removeProduct,
   updateProduct,
 } from "../controllers/product.controllers";
+import { authenticate } from "../middlewares/auth.middleware";
+import { allAdmin } from "../types/global.types";
 
 const router = express.Router();
 
-router.post("/", registerProduct);
 router.get("/", getAllProduct);
 router.get("/:id", getProductById);
-router.put("/:id", updateProduct);
-router.delete("/:id", removeProduct);
+router.post("/", authenticate(allAdmin), registerProduct);
+router.put("/:id", authenticate(allAdmin), updateProduct);
+router.delete("/:id", authenticate(allAdmin), removeProduct);
 
 export default router;
