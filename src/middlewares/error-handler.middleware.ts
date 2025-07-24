@@ -32,6 +32,7 @@ export const errorHandler = (
     message,
     statusCode,
     status,
+    success,
     data: null,
   });
 };
