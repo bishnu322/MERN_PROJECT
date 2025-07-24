@@ -4,6 +4,7 @@ import { Product } from "../models/product.models";
 import { CustomError } from "../middlewares/error-handler.middleware";
 import { Brand } from "../models/brand.models";
 import Category from "../models/category.models";
+import mongoose from "mongoose";
 
 //* register product
 
@@ -13,7 +14,6 @@ export const registerProduct = asyncHandler(
       name,
       brand,
       category,
-      createdBy,
       isFeatured,
       stock,
       price,
@@ -21,16 +21,14 @@ export const registerProduct = asyncHandler(
       size,
     } = req.body;
 
+    const createdBy = req.user._id.toString();
+
     if (!brand) {
       throw new CustomError("Brand is required!", 400);
     }
 
     if (!category) {
       throw new CustomError("category is required", 400);
-    }
-
-    if (!createdBy) {
-      throw new CustomError("createdBy is required", 400);
     }
 
     const product = new Product({
@@ -56,7 +54,7 @@ export const registerProduct = asyncHandler(
 
     product.brand = productBrand._id;
     product.category = productCategory._id;
-    product.createdBy = createdBy;
+    product.createdBy = new mongoose.Types.ObjectId(createdBy);
 
     await product.save();
 
