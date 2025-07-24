@@ -18,8 +18,14 @@ const brandSchema = new mongoose.Schema(
       required: [true, "brand description is required !"],
     },
     logo: {
-      url: String,
-      altText: String,
+      path: {
+        type: String,
+        required: true,
+      },
+      public_id: {
+        type: String,
+        required: true,
+      },
     },
     isActive: {
       type: Boolean,

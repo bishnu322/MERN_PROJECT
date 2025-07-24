@@ -19,11 +19,10 @@ export const authenticate = (role?: Role[]) => {
       const decodedData = verifyToken(access_token);
 
       //* check token expiry
+
       if (Date.now() > decodedData.exp * 1000) {
         throw new CustomError("session expired access_token", 401);
       }
-
-      console.log(decodedData);
 
       const user = await User.findById(decodedData._id);
 
@@ -42,6 +41,7 @@ export const authenticate = (role?: Role[]) => {
         first_name: decodedData.first_name,
         last_name: decodedData.last_name,
       };
+
       // role -> roles.includes(userRole)
       next();
     } catch (error) {
