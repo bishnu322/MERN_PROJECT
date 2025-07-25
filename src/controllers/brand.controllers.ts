@@ -2,8 +2,11 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/async-handler.utils";
 import { Brand } from "../models/brand.models";
 import { CustomError } from "../middlewares/error-handler.middleware";
+import { uploadFile } from "../utils/cloudinary-service.utils";
 
 //* brand registration
+
+const folder_name = "/brands";
 
 export const registerBrand = asyncHandler(
   async (req: Request, res: Response) => {
@@ -27,7 +30,7 @@ export const registerBrand = asyncHandler(
       throw new CustomError("Brand description is required !", 400);
     }
 
-    const brand = await Brand.create({
+    const brand = new Brand({
       brand_name,
       slug,
       description,
@@ -35,8 +38,15 @@ export const registerBrand = asyncHandler(
       categories,
       averageRating,
       ratingCount,
-      logo: { path: logo.path, public_id: logo.filename },
     });
+
+    const { path, public_id } = await uploadFile(logo.path, folder_name);
+    brand.logo = {
+      path,
+      public_id,
+    };
+
+    await brand.save();
 
     res.status(201).json({
       message: "Brand created successfully",
