@@ -19,6 +19,7 @@ export const uploadFile = async (path: string, dir = "/") => {
       path: secure_url,
     };
   } catch (error) {
+    console.log(error);
     throw new CustomError("cloudinary file upload error", 500);
   }
 };
