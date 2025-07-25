@@ -28,6 +28,9 @@ app.use(express.urlencoded({ limit: "5mb", extended: true }));
 //* using cookieParser
 app.use(cookieParser());
 
+//* serving uploads as static file
+app.use("/api/uploads", express.static("uploads/"));
+
 // * Home route
 app.get("/", (req: Request, res: Response) => {
   res.send("server is up and running");

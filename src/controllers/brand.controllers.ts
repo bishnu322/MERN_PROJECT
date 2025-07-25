@@ -11,12 +11,13 @@ export const registerBrand = asyncHandler(
       brand_name,
       slug,
       description,
-      logo,
       isActive,
       categories,
       averageRating,
       ratingCount,
     } = req.body;
+
+    const logo = req.file as Express.Multer.File;
 
     if (!brand_name) {
       throw new CustomError("brand name is required !", 400);
@@ -30,11 +31,11 @@ export const registerBrand = asyncHandler(
       brand_name,
       slug,
       description,
-      logo,
       isActive,
       categories,
       averageRating,
       ratingCount,
+      logo: { path: logo.path, public_id: logo.filename },
     });
 
     res.status(201).json({
