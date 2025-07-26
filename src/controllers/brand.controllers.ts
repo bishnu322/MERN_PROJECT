@@ -40,11 +40,17 @@ export const registerBrand = asyncHandler(
       ratingCount,
     });
 
+    // const uploadedData = await uploadFile(logo.path, folder_name);
     const { path, public_id } = await uploadFile(logo.path, folder_name);
+
     brand.logo = {
       path,
       public_id,
     };
+    // brand.logo = {
+    //   path: uploadedData.path,
+    //   public_id: uploadedData.public_id,
+    // };
 
     await brand.save();
 

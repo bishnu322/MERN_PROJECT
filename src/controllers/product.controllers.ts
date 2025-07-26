@@ -5,8 +5,11 @@ import { CustomError } from "../middlewares/error-handler.middleware";
 import { Brand } from "../models/brand.models";
 import Category from "../models/category.models";
 import mongoose from "mongoose";
+import cloudinary from "../config/cloudinary.config";
+import { uploadFile } from "../utils/cloudinary-service.utils";
 
 //* register product
+const folder_name = "/products";
 
 export const registerProduct = asyncHandler(
   async (req: Request, res: Response) => {
@@ -21,6 +24,7 @@ export const registerProduct = asyncHandler(
       size,
     } = req.body;
 
+    const product_logo = req.file as Express.Multer.File;
     const createdBy = req.user._id.toString();
 
     if (!brand) {
@@ -39,6 +43,16 @@ export const registerProduct = asyncHandler(
       description,
       size,
     });
+
+    const { public_id, path } = await uploadFile(
+      product_logo.path,
+      folder_name
+    );
+
+    product.product_logo = {
+      path,
+      public_id,
+    };
 
     const productBrand = await Brand.findById(brand);
 

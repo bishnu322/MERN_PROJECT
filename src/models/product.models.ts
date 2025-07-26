@@ -17,6 +17,16 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: [true, "Category is required !"],
     },
+    product_logo: {
+      path: {
+        type: String,
+        required: true,
+      },
+      public_id: {
+        type: String,
+        required: true,
+      },
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
