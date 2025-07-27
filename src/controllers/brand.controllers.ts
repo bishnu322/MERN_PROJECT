@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/async-handler.utils";
 import { Brand } from "../models/brand.models";
 import { CustomError } from "../middlewares/error-handler.middleware";
-import { uploadFile } from "../utils/cloudinary-service.utils";
+import { deleteFile, uploadFile } from "../utils/cloudinary-service.utils";
 
 //* brand registration
 
@@ -80,13 +80,37 @@ export const getAllBrand = asyncHandler(async (req: Request, res: Response) => {
 
 export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const payload = req.body;
+  const { brand_name, description } = req.body;
+
+  const logo = req.file as Express.Multer.File;
 
   if (!id) {
     throw new CustomError("brand not found !", 400);
   }
 
-  const brand = await Brand.findByIdAndUpdate({ _id: id }, { $set: payload });
+  const brand = await Brand.findById(id);
+
+  if (!brand) throw new CustomError("brand_name is required", 404);
+
+  if (brand_name) brand.brand_name = brand_name;
+  if (description) brand.description = description;
+
+  if (logo) {
+    const { path, public_id } = await uploadFile(logo.path, folder_name);
+
+    // delete old image
+    if (brand.logo) {
+      await deleteFile([brand.logo.public_id]);
+    }
+
+    //update new image
+    brand.logo = {
+      path,
+      public_id,
+    };
+  }
+
+  await brand.save();
 
   res.status(200).json({
     message: "brand updated successfully",

@@ -17,7 +17,7 @@ const upload = uploader();
 router.get("/", getAllBrand);
 router.get("/:id", getBrandById);
 router.post("/", authenticate(allAdmin), upload.single("logo"), registerBrand);
-router.put("/:id", authenticate(allAdmin), updateBrand);
+router.put("/:id", authenticate(allAdmin), upload.single("logo"), updateBrand);
 router.delete("/:id", authenticate(allAdmin), removeBrand);
 
 export default router;

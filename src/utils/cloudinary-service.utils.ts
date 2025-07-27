@@ -23,3 +23,17 @@ export const uploadFile = async (path: string, dir = "/") => {
     throw new CustomError("cloudinary file upload error", 500);
   }
 };
+
+export const deleteFile = async (public_ids: string[]) => {
+  try {
+    const PromisesRes = public_ids.map(async (public_id) => {
+      return await cloudinary.uploader.destroy(public_id);
+    });
+
+    const res = await Promise.all(PromisesRes);
+
+    return true;
+  } catch (error) {
+    throw new CustomError("file delete Error", 500);
+  }
+};
