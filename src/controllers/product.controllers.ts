@@ -1,3 +1,4 @@
+import { path } from "path";
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/async-handler.utils";
 import { Product } from "../models/product.models";
@@ -6,7 +7,7 @@ import { Brand } from "../models/brand.models";
 import Category from "../models/category.models";
 import mongoose from "mongoose";
 import cloudinary from "../config/cloudinary.config";
-import { uploadFile } from "../utils/cloudinary-service.utils";
+import { deleteFile, uploadFile } from "../utils/cloudinary-service.utils";
 
 //* register product
 const folder_name = "/products";
@@ -24,7 +25,6 @@ export const registerProduct = asyncHandler(
       size,
     } = req.body;
 
-    const product_logo = req.file as Express.Multer.File;
     const createdBy = req.user._id.toString();
 
     if (!brand) {
@@ -44,15 +44,30 @@ export const registerProduct = asyncHandler(
       size,
     });
 
-    const { public_id, path } = await uploadFile(
-      product_logo.path,
-      folder_name
-    );
-
-    product.product_logo = {
-      path,
-      public_id,
+    const { cover_img, images } = req.files as {
+      [fieldname: string]: Express.Multer.File[];
     };
+
+    if (cover_img) {
+      const { path, public_id } = await uploadFile(
+        cover_img[0].path,
+        folder_name
+      );
+
+      product.cover_img = {
+        path,
+        public_id,
+      };
+    }
+
+    if (Array.isArray(images) && images.length > 0) {
+      const imagePaths = images.map(async (newImg) => {
+        return await uploadFile(newImg.path, folder_name);
+      });
+
+      const newImages = await Promise.all(imagePaths);
+      product.set("images", newImages);
+    }
 
     const productBrand = await Brand.findById(brand);
 
@@ -143,15 +158,97 @@ export const removeProduct = asyncHandler(
 export const updateProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const payload = req.body;
+    const {
+      name,
+      brand,
+      category,
+      createdBy,
+      isFeatured,
+      stock,
+      price,
+      description,
+      size,
+      deletedImages,
+    } = req.body;
 
-    const product = await Product.findByIdAndUpdate(
-      { _id: id },
-      { $set: payload }
-    );
+    const { cover_img, images } = req.files as {
+      [fieldname: string]: Express.Multer.File[];
+    };
+
+    let deletedImage: string[] = [];
+
+    if (deletedImages) {
+      deletedImage = JSON.parse(deletedImages);
+    }
+
+    const product = await Product.findById(id);
 
     if (!product) {
       throw new CustomError("product not found!", 404);
+    }
+
+    if (brand) {
+      const brandToUpdate = await Brand.findById(brand);
+
+      if (!brandToUpdate) {
+        throw new CustomError("brand not found", 404);
+      }
+      product.brand = brandToUpdate._id;
+    }
+
+    if (category) {
+      const categoryToUpdate = await Brand.findById(category);
+
+      if (!categoryToUpdate) {
+        throw new CustomError("brand not found", 404);
+      }
+      product.category = categoryToUpdate._id;
+    }
+
+    if (name) product.name = name;
+    // if (brand) product.brand = brand;
+    // if (category) product.category = category;
+    // if (createdBy) product.createdBy = createdBy;
+    if (isFeatured) product.isFeatured = isFeatured;
+    if (stock) product.stock = stock;
+    if (price) product.price = price;
+    if (description) product.description = description;
+    if (size) product.size = size;
+
+    if (cover_img) {
+      const { path, public_id } = await uploadFile(
+        cover_img[0].path,
+        folder_name
+      );
+
+      if (product.cover_img) {
+        await deleteFile([product.cover_img.public_id]);
+      }
+
+      product.cover_img = {
+        path,
+        public_id,
+      };
+    }
+
+    //! if old images are deleted
+    if (Array.isArray(deletedImage) && deletedImage.length > 0) {
+      await deleteFile(deletedImage);
+
+      const filterImages = product.images.filter(
+        (image) => !deletedImage.includes(image.public_id as string)
+      );
+      product.set("images", filterImages);
+    }
+
+    // ! if new images uploaded
+
+    if (images && images.length > 0) {
+      const newImages = await Promise.all(
+        images.map(async (image) => await uploadFile(image.path, folder_name))
+      );
+
+      product.set("images", [...product.images, ...newImages]);
     }
 
     res.status(200).json({

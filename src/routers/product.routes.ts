@@ -19,10 +19,33 @@ router.get("/:id", getProductById);
 router.post(
   "/",
   authenticate(allAdmin),
-  upload.single("product_logo"),
+  upload.fields([
+    {
+      name: "cover_img",
+      maxCount: 1,
+    },
+    {
+      name: "images",
+      maxCount: 5,
+    },
+  ]),
   registerProduct
 );
-router.put("/:id", authenticate(allAdmin), updateProduct);
+router.put(
+  "/:id",
+  authenticate(allAdmin),
+  upload.fields([
+    {
+      name: "cover_img",
+      maxCount: 1,
+    },
+    {
+      name: "images",
+      maxCount: 5,
+    },
+  ]),
+  updateProduct
+);
 router.delete("/:id", authenticate(allAdmin), removeProduct);
 
 export default router;

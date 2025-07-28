@@ -125,7 +125,17 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
 export const removeBrand = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const brand = await Brand.findByIdAndDelete(id);
+  const brand = await Brand.findById(id);
+
+  if (!brand) {
+    throw new CustomError("brand not found", 404);
+  }
+
+  if (brand.logo) {
+    await deleteFile([brand.logo.public_id]);
+  }
+
+  await brand.deleteOne();
 
   res.status(200).json({
     message: "brand removed",

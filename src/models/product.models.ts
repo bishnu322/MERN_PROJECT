@@ -17,7 +17,17 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: [true, "Category is required !"],
     },
-    product_logo: {
+    images: [
+      {
+        path: {
+          type: String,
+        },
+        public_id: {
+          type: String,
+        },
+      },
+    ],
+    cover_img: {
       path: {
         type: String,
         required: true,
