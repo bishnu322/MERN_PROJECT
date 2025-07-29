@@ -1,4 +1,3 @@
-import { path } from "path";
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/async-handler.utils";
 import { Product } from "../models/product.models";
@@ -6,7 +5,6 @@ import { CustomError } from "../middlewares/error-handler.middleware";
 import { Brand } from "../models/brand.models";
 import Category from "../models/category.models";
 import mongoose from "mongoose";
-import cloudinary from "../config/cloudinary.config";
 import { deleteFile, uploadFile } from "../utils/cloudinary-service.utils";
 
 //* register product
@@ -242,7 +240,6 @@ export const updateProduct = asyncHandler(
     }
 
     // ! if new images uploaded
-
     if (images && images.length > 0) {
       const newImages = await Promise.all(
         images.map(async (image) => await uploadFile(image.path, folder_name))
