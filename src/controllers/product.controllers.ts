@@ -286,7 +286,7 @@ export const updateProduct = asyncHandler(
 
 //*  get by category
 
-export const getByCategory = asyncHandler(
+export const getProductByCategory = asyncHandler(
   async (req: Request, res: Response) => {
     const { categoryId } = req.params;
 
@@ -306,18 +306,20 @@ export const getByCategory = asyncHandler(
 
 //*  get by brand
 
-export const getByBrand = asyncHandler(async (req: Request, res: Response) => {
-  const { brandId } = req.params;
+export const getProductByBrand = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { brandId } = req.params;
 
-  const products = await Product.find({ brand: brandId })
-    .populate("brand")
-    .populate("createdBy")
-    .populate("category");
+    const products = await Product.find({ brand: brandId })
+      .populate("brand")
+      .populate("createdBy")
+      .populate("category");
 
-  res.status(200).json({
-    message: "product fetched  successfully",
-    status: "Success",
-    success: true,
-    data: products,
-  });
-});
+    res.status(200).json({
+      message: "product by brand fetched  successfully",
+      status: "Success",
+      success: true,
+      data: products,
+    });
+  }
+);

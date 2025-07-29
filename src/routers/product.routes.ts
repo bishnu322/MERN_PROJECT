@@ -1,6 +1,8 @@
 import express from "express";
 import {
   getAllProduct,
+  getProductByBrand,
+  getProductByCategory,
   getProductById,
   registerProduct,
   removeProduct,
@@ -9,6 +11,7 @@ import {
 import { authenticate } from "../middlewares/auth.middleware";
 import { allAdmin } from "../types/global.types";
 import { uploader } from "../middlewares/uploader.middleware";
+import { getAllBrand } from "../controllers/brand.controllers";
 
 const router = express.Router();
 
@@ -47,5 +50,7 @@ router.put(
   updateProduct
 );
 router.delete("/:id", authenticate(allAdmin), removeProduct);
+router.get("/brand/:brandId", getProductByBrand);
+router.get("/category/:categoryId", getProductByCategory);
 
 export default router;
