@@ -6,6 +6,7 @@ import { Brand } from "../models/brand.models";
 import Category from "../models/category.models";
 import mongoose from "mongoose";
 import { deleteFile, uploadFile } from "../utils/cloudinary-service.utils";
+import { User } from "../models/user.models";
 
 //* register product
 const folder_name = "/products";
@@ -98,7 +99,10 @@ export const registerProduct = asyncHandler(
 
 export const getAllProduct = asyncHandler(
   async (req: Request, res: Response) => {
-    const product = await Product.find();
+    const product = await Product.find({})
+      .populate("brand")
+      .populate("category")
+      .populate("createdBy");
 
     res.status(200).json({
       message: "All product fetched",
@@ -115,7 +119,10 @@ export const getProductById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const product = await Product.findById(id);
+    const product = await Product.findById(id)
+      .populate("brand")
+      .populate("category")
+      .populate("createdBy");
 
     if (!product) {
       throw new CustomError("Product not found!", 404);
@@ -136,11 +143,21 @@ export const removeProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const product = await Product.findByIdAndDelete(id);
+    const product = await Product.findById(id);
 
     if (!product) {
       throw new CustomError("Product not found!", 404);
     }
+
+    if (product.images && product.images.length > 0) {
+      await deleteFile(product.images.map((img: any) => img.public_id));
+    }
+
+    if (product.cover_img) {
+      await deleteFile([product.cover_img.public_id]);
+    }
+
+    await product.deleteOne();
 
     res.status(200).json({
       message: "product removed successfully",
@@ -203,6 +220,16 @@ export const updateProduct = asyncHandler(
       product.category = categoryToUpdate._id;
     }
 
+    if (createdBy) {
+      const createdByToUpdate = await User.findById(createdBy);
+
+      if (!createdByToUpdate) {
+        throw new CustomError("user not found!", 404);
+      }
+
+      product.createdBy = createdByToUpdate._id;
+    }
+
     if (name) product.name = name;
     // if (brand) product.brand = brand;
     // if (category) product.category = category;
@@ -259,4 +286,38 @@ export const updateProduct = asyncHandler(
 
 //*  get by category
 
+export const getByCategory = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { categoryId } = req.params;
+
+    const products = await Product.find({ category: categoryId })
+      .populate("brand")
+      .populate("createdBy")
+      .populate("category");
+
+    res.status(200).json({
+      message: "product fetched  successfully",
+      status: "Success",
+      success: true,
+      data: products,
+    });
+  }
+);
+
 //*  get by brand
+
+export const getByBrand = asyncHandler(async (req: Request, res: Response) => {
+  const { brandId } = req.params;
+
+  const products = await Product.find({ brand: brandId })
+    .populate("brand")
+    .populate("createdBy")
+    .populate("category");
+
+  res.status(200).json({
+    message: "product fetched  successfully",
+    status: "Success",
+    success: true,
+    data: products,
+  });
+});
