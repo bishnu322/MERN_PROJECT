@@ -323,3 +323,21 @@ export const getProductByBrand = asyncHandler(
     });
   }
 );
+
+// * get featured product
+
+export const getFeaturedProduct = asyncHandler(
+  async (req: Request, res: Response) => {
+    const products = await Product.find({ isFeatured: true })
+      .populate("brand")
+      .populate("category")
+      .populate("createdBy");
+
+    res.status(200).json({
+      message: "product by featured fetched  successfully",
+      status: "Success",
+      success: true,
+      data: products,
+    });
+  }
+);
