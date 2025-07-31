@@ -34,6 +34,7 @@ export const registerProduct = asyncHandler(
       throw new CustomError("category is required", 400);
     }
 
+    //creating instance for product
     const product = new Product({
       name,
       isFeatured,
@@ -338,5 +339,3 @@ export const getFeaturedProduct = asyncHandler(
     });
   }
 );
-
-// * wishlist
