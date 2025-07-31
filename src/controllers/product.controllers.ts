@@ -231,9 +231,6 @@ export const updateProduct = asyncHandler(
     }
 
     if (name) product.name = name;
-    // if (brand) product.brand = brand;
-    // if (category) product.category = category;
-    // if (createdBy) product.createdBy = createdBy;
     if (isFeatured) product.isFeatured = isFeatured;
     if (stock) product.stock = stock;
     if (price) product.price = price;

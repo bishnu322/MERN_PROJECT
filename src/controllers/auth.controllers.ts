@@ -1,4 +1,3 @@
-import bcrypt from "bcryptjs";
 import { compareHash, hashPassword } from "./../utils/bcrypt.utils";
 import { Request, Response } from "express";
 import { CustomError } from "../middlewares/error-handler.middleware";
