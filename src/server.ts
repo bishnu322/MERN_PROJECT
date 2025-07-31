@@ -13,6 +13,7 @@ import userRouter from "./routers/user.routes";
 import brandRouter from "./routers/brand.routes";
 import categoryRouter from "./routers/category.routes";
 import productRouter from "./routers/product.routes";
+import wishListRouter from "./routers/wish_list.routes";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -43,6 +44,7 @@ app.use("/api/user", userRouter);
 app.use("/api/brand", brandRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
+app.use("/api/wishlist", wishListRouter);
 
 //* All error routes
 app.all("/{*all}", (req: Request, res: Response, next: NextFunction) => {

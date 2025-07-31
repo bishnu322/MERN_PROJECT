@@ -34,6 +34,13 @@ const userSchema = new mongoose.Schema(
       enum: Object.values(Role),
       default: Role.USER,
     },
+    wish_list: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: [true, "product is required"],
+      },
+    ],
   },
   { timestamps: true }
 );

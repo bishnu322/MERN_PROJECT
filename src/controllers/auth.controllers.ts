@@ -19,6 +19,9 @@ export const registerUser = asyncHandler(
       email,
     });
 
+    if (!password) {
+      throw new CustomError("password is required !", 400);
+    }
     const hashedPassword = await hashPassword(password);
 
     user.password = hashedPassword;
