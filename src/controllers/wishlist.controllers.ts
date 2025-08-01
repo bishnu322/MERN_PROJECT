@@ -76,3 +76,7 @@ export const addToWishLit = asyncHandler(
 //remove wishlist
 
 //clear wishlist
+
+// cart
+// user [{product , quantity , price}]
+// total amount of cart
