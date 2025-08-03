@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/async-handler.utils";
 import { CustomError } from "../middlewares/error-handler.middleware";
 import { Product } from "../models/product.models";
 import { Order } from "../models/order.models";
+import { Order_status } from "../types/enum.types";
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   const { items, shipping_address } = req.body;
@@ -73,7 +74,52 @@ export const getAllOrders = asyncHandler(
     });
   }
 );
+
 // get users order (only user)
+export const getAllUserByOrder = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+
+    if (!userId) {
+      throw new CustomError("no order placed", 400);
+    }
+
+    const userOrder = await Order.find({ userId });
+
+    res.status(200).json({
+      message: "user order fetched....",
+      status: "Success",
+      success: true,
+      data: userOrder,
+    });
+  }
+);
 
 //get order Status(admin)
+export const getOrderStatus = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { status } = req.query;
+
+    if (!status || typeof status !== "string") {
+      throw new CustomError("Order status is required", 400);
+    }
+
+    if (!Object.values(Order_status).includes(status as Order_status)) {
+      throw new CustomError("Invalid order status", 400);
+    }
+
+    const orders = await Order.find({ status })
+      .populate("user")
+      .populate("items.product");
+
+    res.status(200).json({
+      message: "order fetched by status",
+      status: "Success",
+      success: true,
+      order_length: orders.length,
+      data: orders,
+    });
+  }
+);
+
 // cancel order(only)

@@ -1,4 +1,3 @@
-import { timeStamp } from "console";
 import mongoose from "mongoose";
 import { Order_status, Payment_method } from "../types/enum.types";
 
