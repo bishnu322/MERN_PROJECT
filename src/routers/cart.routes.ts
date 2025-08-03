@@ -1,7 +1,7 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware";
 import { users } from "../types/global.types";
-import { createCart } from "../controllers/cart.controllers";
+import { createCart } from "../controllers/cart.controller";
 
 const router = express.Router();
 

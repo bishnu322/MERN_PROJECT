@@ -5,7 +5,7 @@ import {
   registerBrand,
   removeBrand,
   updateBrand,
-} from "../controllers/brand.controllers";
+} from "../controllers/brand.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { allAdmin } from "../types/global.types";
 import { uploader } from "../middlewares/uploader.middleware";

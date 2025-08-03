@@ -1,5 +1,5 @@
 import express from "express";
-import { getAll, getById, removeUser } from "../controllers/user.controllers";
+import { getAll, getById, removeUser } from "../controllers/user.controller";
 import { allAdmin } from "../types/global.types";
 import { authenticate } from "../middlewares/auth.middleware";
 

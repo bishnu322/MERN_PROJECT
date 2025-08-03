@@ -1,4 +1,4 @@
-import { compareHash, hashPassword } from "./../utils/bcrypt.utils";
+import { compareHash, hashPassword } from "../utils/bcrypt.utils";
 import { Request, Response } from "express";
 import { CustomError } from "../middlewares/error-handler.middleware";
 import { User } from "../models/user.models";

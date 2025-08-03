@@ -1,5 +1,5 @@
 import express from "express";
-import { addToWishLit, getWishList } from "../controllers/wishlist.controllers";
+import { addToWishLit, getWishList } from "../controllers/wishlist.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { users } from "../types/global.types";
 

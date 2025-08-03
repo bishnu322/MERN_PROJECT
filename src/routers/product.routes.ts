@@ -7,11 +7,11 @@ import {
   registerProduct,
   removeProduct,
   updateProduct,
-} from "../controllers/product.controllers";
+} from "../controllers/product.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { allAdmin } from "../types/global.types";
 import { uploader } from "../middlewares/uploader.middleware";
-import { getAllBrand } from "../controllers/brand.controllers";
+import { getAllBrand } from "../controllers/brand.controller";
 
 const router = express.Router();
 

@@ -5,7 +5,7 @@ import {
   registerCategory,
   removeCategory,
   updateCategory,
-} from "../controllers/category.controllers";
+} from "../controllers/category.controller";
 import { authenticate } from "../middlewares/auth.middleware";
 import { allAdmin } from "../types/global.types";
 
