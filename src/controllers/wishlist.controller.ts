@@ -73,10 +73,27 @@ export const addToWishLit = asyncHandler(
   }
 );
 
-//remove wishlist
-
 //clear wishlist
 
-// cart
-// user [{product , quantity , price}]
-// total amount of cart
+export const clearWishList = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
+
+    user.set("wish_list", []);
+
+    // user.wish_list.splice(0, user.wish_list.length)
+    await user.save();
+
+    res.status(200).json({
+      message: "Wishlist successfully deleted",
+      success: true,
+      status: "success",
+      data: user.wish_list,
+    });
+  }
+);

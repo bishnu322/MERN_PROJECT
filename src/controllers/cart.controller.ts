@@ -52,5 +52,23 @@ export const createCart = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+// get by cart
+
+export const getCart = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user._id;
+
+  const cart = await Cart.findOne({ user });
+
+  if (!cart) {
+    throw new CustomError("Cart is not created yet", 400);
+  }
+
+  res.status(200).json({
+    message: "cart fetched",
+    success: true,
+    status: "success",
+    data: cart,
+  });
+});
 
 // updateCart=
