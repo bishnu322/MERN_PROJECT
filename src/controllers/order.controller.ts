@@ -7,20 +7,19 @@ import { Order_status } from "../types/enum.types";
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   const { items, shipping_address } = req.body;
-
-  const user = req.user._id;
+  const user = req.params._id;
 
   if (!items) {
-    throw new CustomError("items is required", 400);
+    throw new CustomError("items required", 400);
   }
-
   if (!shipping_address) {
-    throw new CustomError("shipping_address is required", 400);
+    throw new CustomError("shipping_address required", 400);
   }
 
   const address = JSON.parse(shipping_address);
   const orderItems: { product: string; quantity: string }[] = JSON.parse(items);
 
+  // *  preparing order items  with price
   const order = await Promise.all(
     orderItems.map(async (item: { product: string; quantity: string }) => {
       const product = await Product.findById(item.product);
@@ -29,10 +28,9 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         return null;
       }
 
-      // product.stock -= Number(items.)
-
-      // await Cart.findOneAndDelete()
-
+      //*   reducing  products stock
+      product.stock -= Number(item.quantity);
+      await product.save();
       return {
         product: product._id,
         quantity: Number(item.quantity),
