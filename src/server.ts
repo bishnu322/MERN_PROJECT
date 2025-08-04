@@ -16,6 +16,7 @@ import productRouter from "./routers/product.routes";
 import wishListRouter from "./routers/wish_list.routes";
 import cookieParser from "cookie-parser";
 import cartRouter from "./routers/cart.routes";
+import orderRouter from "./routers/order.routes";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +48,7 @@ app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api/wishlist", wishListRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/order", orderRouter);
 
 //* All error routes
 app.all("/{*all}", (req: Request, res: Response, next: NextFunction) => {

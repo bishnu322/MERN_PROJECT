@@ -29,6 +29,10 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         return null;
       }
 
+      // product.stock -= Number(items.)
+
+      // await Cart.findOneAndDelete()
+
       return {
         product: product._id,
         quantity: Number(item.quantity),
@@ -123,3 +127,4 @@ export const getOrderStatus = asyncHandler(
 );
 
 // cancel order(only)
+export const cancel = asyncHandler(async (req: Request, res: Response) => {});
