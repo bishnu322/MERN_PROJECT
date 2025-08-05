@@ -75,29 +75,29 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   };
 
   const access_token = generateToken(payload);
-  const date = new Date();
-  const IndTimeZone = date.toLocaleString("en-IN");
+  // const date = new Date();
+  // const IndTimeZone = date.toLocaleString("en-IN");
 
-  const html = `
-  <html >
-    <body>
-     <div style="background-color:#3572DE; text-align: center; padding: 10px; font-size:20px; color: #fff; font-weight: 800">New device logged in detected !</div>
-      <div style="background: #35DE8F; height: 20em">
-      <div style="text-align:center; padding: 15px">We noticed a login from a device you don't usually use</div>
-      <div style="text-align:center">Device ip address: ${req.ip}</div>
-      <div style="text-align:center">Date & Time: ${IndTimeZone}</div>
-      <div style="text-align:center">If this wasn't you,you can secure your account, from a device you have logged in with the past</div>
-    </div>
-  </>
-</body>
-</html>
-  `;
+  //   const html = `
+  //   <html >
+  //     <body>
+  //      <div style="background-color:#3572DE; text-align: center; padding: 10px; font-size:20px; color: #fff; font-weight: 800">New device logged in detected !</div>
+  //       <div style="background: #35DE8F; height: 20em">
+  //       <div style="text-align:center; padding: 15px">We noticed a login from a device you don't usually use</div>
+  //       <div style="text-align:center">Device ip address: ${req.ip}</div>
+  //       <div style="text-align:center">Date & Time: ${IndTimeZone}</div>
+  //       <div style="text-align:center">If this wasn't you,you can secure your account, from a device you have logged in with the past</div>
+  //     </div>
+  //   </>
+  // </body>
+  // </html>
+  //   `;
 
-  await sendEmail({
-    to: "bitinningclips@gmail.com",
-    subject: "Successfully logged in",
-    html: html,
-  });
+  //   await sendEmail({
+  //     to: "bitinningclips@gmail.com",
+  //     subject: "Successfully logged in",
+  //     html: html,
+  //   });
 
   const { password: pass, ...loggedInUser } = user._doc;
 
