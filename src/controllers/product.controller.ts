@@ -102,22 +102,40 @@ export const getAllProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const { current_page, per_page } = req.query;
 
+    const filter = {};
+
     const page = Number(current_page) || 1;
     const limit = Number(per_page) || 10;
     const skip = (page - 1) * limit;
 
-    const product = await Product.find({})
+    const product = await Product.find(filter)
       .populate("brand")
       .populate("category")
       .populate("createdBy")
       .limit(limit)
       .skip(skip);
 
+    const total = await Product.countDocuments(filter);
+    const total_page = Math.ceil(total / limit);
+
+    const next_page = total_page > page ? page + 1 : null;
+    const pre_page = 1 < page ? page - 1 : null;
+
+    const has_next_page = total_page > page ? true : false;
+    const has_pre_page = 1 < page ? true : false;
+
     res.status(200).json({
       message: "All product fetched",
       status: "Success",
       success: true,
       data: product,
+      pagination: {
+        total,
+        next_page,
+        pre_page,
+        has_next_page,
+        has_pre_page,
+      },
     });
   }
 );

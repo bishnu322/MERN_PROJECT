@@ -53,12 +53,6 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     user,
   });
 
-  await sendEmail({
-    to: "",
-    subject: "",
-    html: "",
-  });
-
   res.status(201).json({
     message: "order created successfully",
     status: "Success",
