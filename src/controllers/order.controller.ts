@@ -5,10 +5,11 @@ import { Product } from "../models/product.models";
 import { Order } from "../models/order.models";
 import { Order_status } from "../types/enum.types";
 import { sendEmail } from "../utils/mailer.utils";
+import { Cart } from "../models/cart.models";
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   const { items, shipping_address } = req.body;
-  const user = req.params._id;
+  const user = req.user._id;
 
   if (!items) {
     throw new CustomError("items required", 400);
@@ -29,7 +30,7 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         return null;
       }
 
-      //*   reducing  products stock
+      //*   reduning products stock
       product.stock -= Number(item.quantity);
       await product.save();
       return {
@@ -40,90 +41,105 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     })
   );
 
-  const filteredItem = order.filter((order) => order !== null);
+  //*   filter null elements
+  const filteredOrderItems = order.filter((order) => order !== null);
 
-  const total_amount = filteredItem.reduce((acc: any, val: any) => {
+  // * calculating  total amount
+  const total_amount = filteredOrderItems.reduce((acc, val) => {
     return (acc += Number(val.total_price));
-  });
+  }, 0);
 
+  console.log(user);
+  //* placing order
   const newOrder = await Order.create({
-    items: filteredItem,
+    user,
+    items: filteredOrderItems,
     total_amount,
     shipping_address: address,
-    user,
+  });
+
+  const orderPlaced = await Order.findById(newOrder._id)
+    .populate("items.product")
+    .populate("user");
+
+  // ! deleting cart after order is placed
+  await Cart.findOneAndDelete({ user });
+
+  await sendEmail({
+    // html: generate_order_confirmation_email(orderPlaced),
+    html: "",
+    subject: "Order Confirmed",
+    to: "sunya.sagarbhandari@gmail.com",
   });
 
   res.status(201).json({
-    message: "order created successfully",
-    status: "Success",
-    success: true,
+    message: "order placed",
     data: newOrder,
+    success: true,
+    status: "success",
   });
 });
 
-// get all order (only admin)
+//* get all orders (only admin)
 
-export const getAllOrders = asyncHandler(
+export const getAll = asyncHandler(async (req: Request, res: Response) => {
+  const orders = await Order.find({}).sort({ createdAt: -1 });
+
+  res.status(200).json({
+    message: "All order fetched",
+    data: orders,
+    success: true,
+    status: "success",
+  });
+});
+
+//* get user order (only user)
+export const getAllByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user._id;
 
     const orders = await Order.find({ user }).sort({ createdAt: -1 });
 
     res.status(200).json({
-      message: "all order fetched successfully",
-      status: "Success",
-      success: true,
+      message: "All order fetched",
       data: orders,
-    });
-  }
-);
-
-// get users order (only user)
-export const getAllUserByOrder = asyncHandler(
-  async (req: Request, res: Response) => {
-    const userId = req.user?._id;
-
-    if (!userId) {
-      throw new CustomError("no order placed", 400);
-    }
-
-    const userOrder = await Order.find({ userId });
-
-    res.status(200).json({
-      message: "user order fetched....",
-      status: "Success",
       success: true,
-      data: userOrder,
+      status: "success",
     });
   }
 );
 
-//get order Status(admin)
-export const getOrderStatus = asyncHandler(
+//* update order status (admin)
+
+export const updateStatus = asyncHandler(
   async (req: Request, res: Response) => {
-    const { status } = req.query;
+    const { status } = req.body;
+    const { id } = req.params;
 
-    if (!status || typeof status !== "string") {
-      throw new CustomError("Order status is required", 400);
-    }
-
-    if (!Object.values(Order_status).includes(status as Order_status)) {
-      throw new CustomError("Invalid order status", 400);
-    }
-
-    const orders = await Order.find({ status })
-      .populate("user")
-      .populate("items.product");
-
+    const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
     res.status(200).json({
-      message: "order fetched by status",
-      status: "Success",
+      message: "Order Status updated",
+      data: order,
       success: true,
-      order_length: orders.length,
-      data: orders,
+      status: "success",
     });
   }
 );
 
-// cancel order(only)
-export const cancel = asyncHandler(async (req: Request, res: Response) => {});
+//* cancel order (only)
+
+export const cancel = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const order = await Order.findByIdAndUpdate(
+    id,
+    { status: Order_status.CANCELLED },
+    { new: true }
+  );
+  res.status(200).json({
+    message: "Order Cancelled",
+    data: order,
+    success: true,
+    status: "success",
+  });
+});
