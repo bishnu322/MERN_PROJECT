@@ -100,10 +100,18 @@ export const registerProduct = asyncHandler(
 
 export const getAllProduct = asyncHandler(
   async (req: Request, res: Response) => {
+    const { current_page, per_page } = req.query;
+
+    const page = Number(current_page) || 1;
+    const limit = Number(per_page) || 10;
+    const skip = (page - 1) * limit;
+
     const product = await Product.find({})
       .populate("brand")
       .populate("category")
-      .populate("createdBy");
+      .populate("createdBy")
+      .limit(limit)
+      .skip(skip);
 
     res.status(200).json({
       message: "All product fetched",

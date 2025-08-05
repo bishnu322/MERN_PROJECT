@@ -4,6 +4,7 @@ import { CustomError } from "../middlewares/error-handler.middleware";
 import { Product } from "../models/product.models";
 import { Order } from "../models/order.models";
 import { Order_status } from "../types/enum.types";
+import { sendEmail } from "../utils/mailer.utils";
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   const { items, shipping_address } = req.body;
@@ -50,6 +51,12 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     total_amount,
     shipping_address: address,
     user,
+  });
+
+  await sendEmail({
+    to: "",
+    subject: "",
+    html: "",
   });
 
   res.status(201).json({
