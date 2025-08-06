@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/async-handler.utils";
 import { Brand } from "../models/brand.models";
 import { CustomError } from "../middlewares/error-handler.middleware";
 import { deleteFile, uploadFile } from "../utils/cloudinary-service.utils";
+import { pagination } from "../utils/pagination.utils";
 
 //* brand registration
 
@@ -66,13 +67,33 @@ export const registerBrand = asyncHandler(
 //* get All brands
 
 export const getAllBrand = asyncHandler(async (req: Request, res: Response) => {
-  const brand = await Brand.find();
+  const { current_page, per_page } = req.query;
+
+  const filter = {};
+
+  const page = Number(current_page) || 1;
+  const limit = Number(per_page) || 10;
+  const skip = (page - 1) * limit;
+
+  const brand = await Brand.find(filter).limit(limit).skip(skip);
+
+  const total = await Brand.countDocuments(filter);
+
+  const { total_page, next_page, pre_page, has_next_page, has_pre_page } =
+    await pagination(page, limit, total);
 
   res.status(200).json({
     message: "All brands",
     status: "Success",
     success: true,
     data: brand,
+    pagination: {
+      total_page,
+      next_page,
+      pre_page,
+      has_next_page,
+      has_pre_page,
+    },
   });
 });
 

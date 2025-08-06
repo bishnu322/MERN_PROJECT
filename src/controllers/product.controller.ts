@@ -118,7 +118,7 @@ export const getAllProduct = asyncHandler(
 
     const total = await Product.countDocuments(filter);
 
-    const { next_page, pre_page, has_next_page, has_pre_page } =
+    const { total_page, next_page, pre_page, has_next_page, has_pre_page } =
       await pagination(page, limit, total);
 
     res.status(200).json({
@@ -127,7 +127,7 @@ export const getAllProduct = asyncHandler(
       success: true,
       data: product,
       pagination: {
-        total,
+        total_page,
         next_page,
         pre_page,
         has_next_page,
