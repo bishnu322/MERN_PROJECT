@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../utils/async-handler.utils";
 import { CustomError } from "../middlewares/error-handler.middleware";
 import Category from "../models/category.models";
+import { pagination } from "../utils/pagination.utils";
 
 //* register category
 
@@ -35,13 +36,32 @@ export const registerCategory = asyncHandler(
 
 export const getAllCategory = asyncHandler(
   async (req: Request, res: Response) => {
-    const category = await Category.find();
+    const { current_page, per_page, query } = req.query;
+
+    const filter = {};
+    const page = Number(current_page) || 1;
+    const limit = Number(per_page) || 10;
+    const skip = (page - 1) * limit;
+
+    const category = await Category.find(filter).limit(limit).skip(skip);
+
+    const total = await Category.countDocuments(filter);
+
+    const { total_page, next_page, pre_page, has_next_page, has_pre_page } =
+      await pagination(page, limit, total);
 
     res.status(200).json({
       message: "All Category fetch successfully",
       status: "Success",
       success: true,
       data: category,
+      pagination: {
+        total_page,
+        next_page,
+        pre_page,
+        has_next_page,
+        has_pre_page,
+      },
     });
   }
 );
