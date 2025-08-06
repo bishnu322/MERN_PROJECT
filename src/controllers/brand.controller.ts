@@ -67,13 +67,34 @@ export const registerBrand = asyncHandler(
 //* get All brands
 
 export const getAllBrand = asyncHandler(async (req: Request, res: Response) => {
-  const { current_page, per_page } = req.query;
+  const { current_page, per_page, query, category } = req.query;
 
-  const filter = {};
+  const filter: Record<string, any> = {};
 
   const page = Number(current_page) || 1;
   const limit = Number(per_page) || 10;
   const skip = (page - 1) * limit;
+
+  if (query) {
+    filter.$or = [
+      {
+        brand_name: {
+          $regex: query,
+          $options: "i",
+        },
+      },
+      {
+        description: {
+          $regex: query,
+          $options: "i",
+        },
+      },
+    ];
+  }
+
+  if (category) {
+    filter.category = category;
+  }
 
   const brand = await Brand.find(filter).limit(limit).skip(skip);
 
