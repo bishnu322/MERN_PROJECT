@@ -30,7 +30,7 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         return null;
       }
 
-      //*   reduning products stock
+      //*   reducing products stock
       product.stock -= Number(item.quantity);
       await product.save();
       return {
@@ -49,7 +49,6 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     return (acc += Number(val.total_price));
   }, 0);
 
-  console.log(user);
   //* placing order
   const newOrder = await Order.create({
     user,
@@ -65,12 +64,20 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   // ! deleting cart after order is placed
   await Cart.findOneAndDelete({ user });
 
-  await sendEmail({
-    // html: generate_order_confirmation_email(orderPlaced),
-    html: "",
-    subject: "Order Confirmed",
-    to: "sunya.sagarbhandari@gmail.com",
-  });
+  // let html = `
+  //   <html>
+  //     <body>
+  //       <h1>${filteredOrderItems}</h1>
+  //       <h1>${total_amount}</h1>
+  //     </body>
+  //   </html>
+  // `;
+
+  // await sendEmail({
+  //   html: "",
+  //   subject: "Order Confirmed",
+  //   to: "sunya.sagarbhandari@gmail.com",
+  // });
 
   res.status(201).json({
     message: "order placed",
