@@ -7,6 +7,7 @@ import Category from "../models/category.models";
 import mongoose from "mongoose";
 import { deleteFile, uploadFile } from "../utils/cloudinary-service.utils";
 import { User } from "../models/user.models";
+import { pagination } from "../utils/pagination.utils";
 
 //* register product
 const folder_name = "/products";
@@ -116,13 +117,9 @@ export const getAllProduct = asyncHandler(
       .skip(skip);
 
     const total = await Product.countDocuments(filter);
-    const total_page = Math.ceil(total / limit);
 
-    const next_page = total_page > page ? page + 1 : null;
-    const pre_page = 1 < page ? page - 1 : null;
-
-    const has_next_page = total_page > page ? true : false;
-    const has_pre_page = 1 < page ? true : false;
+    const { next_page, pre_page, has_next_page, has_pre_page } =
+      await pagination(page, limit, total);
 
     res.status(200).json({
       message: "All product fetched",
