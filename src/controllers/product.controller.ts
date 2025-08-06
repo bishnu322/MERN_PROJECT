@@ -101,13 +101,72 @@ export const registerProduct = asyncHandler(
 
 export const getAllProduct = asyncHandler(
   async (req: Request, res: Response) => {
-    const { current_page, per_page } = req.query;
+    const {
+      current_page,
+      per_page,
+      query,
+      category,
+      brand,
+      min_price,
+      max_price,
+    } = req.query;
 
-    const filter = {};
+    const filter: Record<string, any> = {};
 
     const page = Number(current_page) || 1;
     const limit = Number(per_page) || 10;
     const skip = (page - 1) * limit;
+
+    // if (query) {
+    //   filter.name = {
+    //     $regex: query,
+    //     $options: "i",
+    //   };
+    // }
+
+    if (query) {
+      filter.$or = [
+        {
+          name: {
+            $regex: query,
+            $options: "i",
+          },
+        },
+        {
+          description: {
+            $regex: query,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    // category filter
+
+    if (category) {
+      filter.category = category;
+    }
+
+    // brand filter
+
+    if (brand) {
+      filter.brand = brand;
+    }
+
+    // price range
+    if (min_price || max_price) {
+      if (min_price) {
+        filter.price = {
+          $gte: min_price,
+        };
+      }
+
+      if (max_price) {
+        filter.price = {
+          $lte: max_price,
+        };
+      }
+    }
 
     const product = await Product.find(filter)
       .populate("brand")
