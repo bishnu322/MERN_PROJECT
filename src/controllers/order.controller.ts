@@ -84,6 +84,7 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     data: newOrder,
     success: true,
     status: "success",
+    newData: orderPlaced,
   });
 });
 
