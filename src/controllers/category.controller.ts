@@ -38,10 +38,23 @@ export const getAllCategory = asyncHandler(
   async (req: Request, res: Response) => {
     const { current_page, per_page, query } = req.query;
 
-    const filter = {};
+    const filter: Record<string, any> = {};
     const page = Number(current_page) || 1;
     const limit = Number(per_page) || 10;
     const skip = (page - 1) * limit;
+
+    if (query) {
+      filter.$or = {
+        name: {
+          $regex: query,
+          $options: "i",
+        },
+        description: {
+          $regex: query,
+          $options: "i",
+        },
+      };
+    }
 
     const category = await Category.find(filter).limit(limit).skip(skip);
 
