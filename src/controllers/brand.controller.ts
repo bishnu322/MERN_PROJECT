@@ -130,7 +130,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError("brand not found !", 400);
   }
 
-  const brand = await Brand.findById(id);
+  const brand = await Brand.findById(id).populate("category");
 
   if (!brand) throw new CustomError("brand_name is required", 404);
 

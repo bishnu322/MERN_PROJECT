@@ -30,10 +30,6 @@ const brandSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    categories: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    },
     averageRating: {
       type: Number,
       default: 0,
