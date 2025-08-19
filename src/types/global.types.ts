@@ -1,3 +1,4 @@
+// import { allAdmin } from "./global.types";
 import mongoose from "mongoose";
 import { Role } from "./enum.types";
 
@@ -16,3 +17,4 @@ export interface IJWTDecodedPayload extends IJWTPayload {
 
 export const allAdmin = [Role.ADMIN, Role.SUPER_ADMIN];
 export const users = [Role.USER];
+export const allAdminAndUser = [...allAdmin, ...users];
