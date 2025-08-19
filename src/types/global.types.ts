@@ -1,4 +1,3 @@
-// import { allAdmin } from "./global.types";
 import mongoose from "mongoose";
 import { Role } from "./enum.types";
 
