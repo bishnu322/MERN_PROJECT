@@ -164,3 +164,40 @@ export const changePassword = asyncHandler(
     });
   }
 );
+
+// logout
+
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  res
+    .clearCookie("access_token", {
+      secure: process.env.NODE_ENV === "development" ? false : true,
+      httpOnly: true,
+      sameSite: "none",
+    })
+    .status(200)
+    .json({
+      message: "User successfully logout",
+      status: "success",
+      success: true,
+      data: null,
+    });
+});
+
+// check profile
+
+export const profile = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new CustomError("Profile found", 400);
+  }
+
+  res.status(200).json({
+    message: "profile fetched",
+    status: "success",
+    success: true,
+    data: user,
+  });
+});
