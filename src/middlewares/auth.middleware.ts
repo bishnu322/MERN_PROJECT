@@ -21,6 +21,12 @@ export const authenticate = (role?: Role[]) => {
       //* check token expiry
 
       if (Date.now() > decodedData.exp * 1000) {
+        // clearing cookie
+        res.clearCookie("access_token", {
+          secure: process.env.NODE_ENV === "development" ? false : true,
+          httpOnly: true,
+          sameSite: "none",
+        });
         throw new CustomError("session expired access_token", 401);
       }
 
