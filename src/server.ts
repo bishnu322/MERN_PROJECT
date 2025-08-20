@@ -17,6 +17,7 @@ import wishListRouter from "./routers/wish_list.routes";
 import cookieParser from "cookie-parser";
 import cartRouter from "./routers/cart.routes";
 import orderRouter from "./routers/order.routes";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,8 @@ const DB_URI = process.env.DB_URI ?? "";
 
 //* calling database connection
 DB_CONNECTION(DB_URI);
+
+app.use(cors());
 
 //*  Using middlewares
 app.use(express.json({ limit: "5mb" }));

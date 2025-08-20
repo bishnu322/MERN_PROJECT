@@ -18,11 +18,13 @@ const wish_list_routes_1 = __importDefault(require("./routers/wish_list.routes")
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cart_routes_1 = __importDefault(require("./routers/cart.routes"));
 const order_routes_1 = __importDefault(require("./routers/order.routes"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 const DB_URI = (_a = process.env.DB_URI) !== null && _a !== void 0 ? _a : "";
 //* calling database connection
 (0, db_config_1.DB_CONNECTION)(DB_URI);
+app.use((0, cors_1.default)());
 //*  Using middlewares
 app.use(express_1.default.json({ limit: "5mb" }));
 app.use(express_1.default.urlencoded({ limit: "5mb", extended: true }));
