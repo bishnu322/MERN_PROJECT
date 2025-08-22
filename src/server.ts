@@ -26,6 +26,8 @@ const DB_URI = process.env.DB_URI ?? "";
 //* calling database connection
 DB_CONNECTION(DB_URI);
 
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: [
