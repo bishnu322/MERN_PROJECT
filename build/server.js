@@ -24,7 +24,13 @@ const PORT = process.env.PORT || 3000;
 const DB_URI = (_a = process.env.DB_URI) !== null && _a !== void 0 ? _a : "";
 //* calling database connection
 (0, db_config_1.DB_CONNECTION)(DB_URI);
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: [
+        "http://localhost:5173", // your dev frontend
+        "https://mern-kart-client.vercel.app", // your deployed frontend
+    ],
+    credentials: true, // allow cookies
+}));
 //*  Using middlewares
 app.use(express_1.default.json({ limit: "5mb" }));
 app.use(express_1.default.urlencoded({ limit: "5mb", extended: true }));
