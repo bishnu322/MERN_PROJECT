@@ -26,7 +26,15 @@ const DB_URI = process.env.DB_URI ?? "";
 //* calling database connection
 DB_CONNECTION(DB_URI);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // your dev frontend
+      "https://mern-kart-client.vercel.app", // your deployed frontend
+    ],
+    credentials: true, // allow cookies
+  })
+);
 
 //*  Using middlewares
 app.use(express.json({ limit: "5mb" }));
