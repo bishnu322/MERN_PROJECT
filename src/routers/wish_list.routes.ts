@@ -1,11 +1,11 @@
 import express from "express";
 import { addToWishLit, getWishList } from "../controllers/wishlist.controller";
 import { authenticate } from "../middlewares/auth.middleware";
-import { users } from "../types/global.types";
+import { allAdminAndUser, users } from "../types/global.types";
 
 const router = express.Router();
 
-router.post("/", authenticate(users), addToWishLit);
-router.get("/", authenticate(users), getWishList);
+router.post("/", authenticate(allAdminAndUser), addToWishLit);
+router.get("/", authenticate(allAdminAndUser), getWishList);
 
 export default router;

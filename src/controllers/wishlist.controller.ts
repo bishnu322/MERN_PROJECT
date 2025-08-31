@@ -9,7 +9,7 @@ import { Product } from "../models/product.models";
 export const getWishList = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user._id;
 
-  const user = await User.findById(userId).populate("wish_list.product");
+  const user = await User.findById(userId).populate("wish_list");
 
   if (!user) {
     throw new CustomError("wishList not found!", 404);
@@ -41,7 +41,7 @@ export const addToWishLit = asyncHandler(
       throw new CustomError("product not found!", 404);
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate("Wish_list");
 
     let isProductAlreadyExists = user?.wish_list.find(
       (id) => product._id.toString() === id.toString()
@@ -59,17 +59,17 @@ export const addToWishLit = asyncHandler(
         status: "Success",
         success: true,
       });
+    } else {
+      user?.wish_list.push(product._id);
+      await user?.save();
+
+      res.status(200).json({
+        message: "product added to wish_list",
+        status: "Success",
+        success: true,
+        data: user?.wish_list,
+      });
     }
-
-    user?.wish_list.push(product._id);
-    await user?.save();
-
-    res.status(200).json({
-      message: "product added to wish_list",
-      status: "Success",
-      success: true,
-      data: user?.wish_list,
-    });
   }
 );
 
