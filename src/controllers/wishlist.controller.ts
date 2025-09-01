@@ -31,43 +31,46 @@ export const addToWishLit = asyncHandler(
     const userId = req.user._id;
 
     if (!productId) {
-      throw new CustomError("product id is required !", 400);
+      throw new CustomError("product id is required!", 400);
     }
 
+    // check product exists
     const product = await Product.findById(productId);
-
-    // console.log(product);
     if (!product) {
       throw new CustomError("product not found!", 404);
     }
 
-    const user = await User.findById(userId).populate("wish_list");
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new CustomError("user not found!", 404);
+    }
 
-    let isProductAlreadyExists = user?.wish_list.find(
-      (id) => product._id.toString() === id.toString()
+    // check if product already exists in wishlist
+    const exists = user.wish_list.some(
+      (id) => id.toString() === product._id.toString()
     );
 
-    if (isProductAlreadyExists) {
-      let list = user?.wish_list.filter(
-        (id) => product.id.toString !== id.toString()
+    if (exists) {
+      // remove product
+      user.wish_list = user.wish_list.filter(
+        (id) => id.toString() !== product._id.toString()
       );
-
-      await user?.set("wish_list", list);
+      await user.save();
 
       return res.status(200).json({
-        message: "product removed to wish_list",
-        status: "Success",
+        message: "product removed from wishlist",
         success: true,
+        data: user.wish_list,
       });
     } else {
-      user?.wish_list.push(product._id);
-      await user?.save();
+      // add product
+      user.wish_list.push(product._id);
+      await user.save();
 
-      res.status(200).json({
-        message: "product added to wish_list",
-        status: "Success",
+      return res.status(200).json({
+        message: "product added to wishlist",
         success: true,
-        data: user?.wish_list,
+        data: user.wish_list,
       });
     }
   }

@@ -15,7 +15,9 @@ export const createCart = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError("product id required", 400);
   }
 
-  cart = await Cart.findOne({ user: userId });
+  cart = await Cart.findOne({ user: userId })
+    .populate({ path: "user" })
+    .populate({ path: "items.product" });
 
   if (!cart) {
     cart = await Cart.create({ user: userId, total_amount: 0 });
@@ -57,7 +59,9 @@ export const createCart = asyncHandler(async (req: Request, res: Response) => {
 export const getCart = asyncHandler(async (req: Request, res: Response) => {
   const user = req.user._id;
 
-  const cart = await Cart.findOne({ user });
+  const cart = await Cart.findOne({ user })
+    .populate({ path: "user" })
+    .populate({ path: "items.product" });
 
   if (!cart) {
     throw new CustomError("Cart is not created yet", 400);

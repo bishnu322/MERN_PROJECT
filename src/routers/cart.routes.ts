@@ -1,11 +1,12 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware";
-import { users } from "../types/global.types";
+import { allAdmin, users } from "../types/global.types";
 import { createCart, getCart } from "../controllers/cart.controller";
 
 const router = express.Router();
 
-router.post("/", authenticate(users), createCart);
-router.get("/", authenticate(users), getCart);
+router.post("/", authenticate(allAdmin), createCart);
+// router.get("/", authenticate(users), getCart);
+router.get("/", authenticate(allAdmin), getCart);
 
 export default router;
