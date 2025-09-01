@@ -27,21 +27,21 @@ export const getWishList = asyncHandler(async (req: Request, res: Response) => {
 
 export const addToWishLit = asyncHandler(
   async (req: Request, res: Response) => {
-    const productId = req.body;
+    const productId = req.body._id;
     const userId = req.user._id;
 
     if (!productId) {
       throw new CustomError("product id is required !", 400);
     }
 
-    const product = await Product.findById(productId.id);
+    const product = await Product.findById(productId);
 
     // console.log(product);
     if (!product) {
       throw new CustomError("product not found!", 404);
     }
 
-    const user = await User.findById(userId).populate("Wish_list");
+    const user = await User.findById(userId).populate("wish_list");
 
     let isProductAlreadyExists = user?.wish_list.find(
       (id) => product._id.toString() === id.toString()
