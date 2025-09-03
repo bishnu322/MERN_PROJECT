@@ -52,13 +52,13 @@ export const addToWishLit = asyncHandler(
 
     if (exists) {
       // remove product
-      user.wish_list = user.wish_list.filter(
-        (id) => id.toString() !== product._id.toString()
-      );
-      await user.save();
+      // user.wish_list = user.wish_list.filter(
+      //   (id) => id.toString() !== product._id.toString()
+      // );
+      // await user.save();
 
       return res.status(200).json({
-        message: "product removed from wishlist",
+        message: "product already exist in wishlist",
         success: true,
         data: user.wish_list,
       });
@@ -73,6 +73,38 @@ export const addToWishLit = asyncHandler(
         data: user.wish_list,
       });
     }
+  }
+);
+
+// remove product from wishlist
+
+export const removeWishlist = asyncHandler(
+  async (req: Request, res: Response) => {
+    const productId = req.body._id;
+    const userId = req.user._id;
+
+    if (!productId) {
+      throw new CustomError("product id is required! ", 401);
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new CustomError("User doesn't exist", 401);
+    }
+
+    const wishlist = user.wish_list.filter(
+      (id) => id.toString() !== productId.toString()
+    );
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "product removed from wishlist",
+      status: "Success",
+      success: true,
+      data: wishlist,
+    });
   }
 );
 
