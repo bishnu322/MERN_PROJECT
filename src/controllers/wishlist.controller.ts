@@ -51,12 +51,7 @@ export const addToWishLit = asyncHandler(
     );
 
     if (exists) {
-      // remove product
-      // user.wish_list = user.wish_list.filter(
-      //   (id) => id.toString() !== product._id.toString()
-      // );
-      // await user.save();
-
+      // if product already exists
       return res.status(200).json({
         message: "product already exist in wishlist",
         success: true,
@@ -97,6 +92,7 @@ export const removeWishlist = asyncHandler(
       (id) => id.toString() !== productId.toString()
     );
 
+    user.wish_list = wishlist;
     await user.save();
 
     return res.status(200).json({
