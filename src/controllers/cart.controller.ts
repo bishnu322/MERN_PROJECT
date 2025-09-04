@@ -61,7 +61,19 @@ export const getCart = asyncHandler(async (req: Request, res: Response) => {
 
   const cart = await Cart.findOne({ user })
     .populate({ path: "user" })
-    .populate({ path: "items.product" });
+    .populate({
+      path: "items.product",
+      populate: [
+        {
+          path: "brand",
+          model: "Brand",
+        },
+        {
+          path: "category",
+          model: "Category",
+        },
+      ],
+    });
 
   if (!cart) {
     throw new CustomError("Cart is not created yet", 400);
