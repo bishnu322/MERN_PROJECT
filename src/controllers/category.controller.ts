@@ -44,19 +44,26 @@ export const getAllCategory = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (query) {
-      filter.$or = {
-        name: {
-          $regex: query,
-          $options: "i",
+      filter.$or = [
+        {
+          name: {
+            $regex: query,
+            $options: "i",
+          },
         },
-        description: {
-          $regex: query,
-          $options: "i",
+        {
+          description: {
+            $regex: query,
+            $options: "i",
+          },
         },
-      };
+      ];
     }
 
-    const category = await Category.find(filter).limit(limit).skip(skip);
+    const category = await Category.find(filter)
+      .limit(limit)
+      .skip(skip)
+      .sort({ createdAt: -1 });
 
     const total = await Category.countDocuments(filter);
 
