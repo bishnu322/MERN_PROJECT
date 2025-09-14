@@ -96,7 +96,10 @@ export const getAllBrand = asyncHandler(async (req: Request, res: Response) => {
     filter.category = category;
   }
 
-  const brand = await Brand.find(filter).limit(limit).skip(skip);
+  const brand = await Brand.find(filter)
+    .limit(limit)
+    .skip(skip)
+    .sort({ createdAt: -1 });
 
   const total = await Brand.countDocuments(filter);
 
@@ -130,7 +133,7 @@ export const updateBrand = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError("brand not found !", 400);
   }
 
-  const brand = await Brand.findById(id).populate("category");
+  const brand = await Brand.findById(id);
 
   if (!brand) throw new CustomError("brand_name is required", 404);
 
