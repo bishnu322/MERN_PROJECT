@@ -173,7 +173,8 @@ export const getAllProduct = asyncHandler(
       .populate("category")
       .populate("createdBy")
       .limit(limit)
-      .skip(skip);
+      .skip(skip)
+      .sort({ createdAt: -1 });
 
     const total = await Product.countDocuments(filter);
 
@@ -288,19 +289,17 @@ export const updateProduct = asyncHandler(
     if (brand) {
       const brandToUpdate = await Brand.findById(brand);
 
-      if (!brandToUpdate) {
-        throw new CustomError("brand not found", 404);
+      if (brandToUpdate) {
+        product.brand = brandToUpdate._id;
       }
-      product.brand = brandToUpdate._id;
     }
 
     if (category) {
       const categoryToUpdate = await Brand.findById(category);
 
-      if (!categoryToUpdate) {
-        throw new CustomError("brand not found", 404);
+      if (categoryToUpdate) {
+        product.category = categoryToUpdate._id;
       }
-      product.category = categoryToUpdate._id;
     }
 
     if (createdBy) {
@@ -354,6 +353,8 @@ export const updateProduct = asyncHandler(
 
       product.set("images", [...product.images, ...newImages]);
     }
+
+    product.save();
 
     res.status(200).json({
       message: "product updated successfully",
