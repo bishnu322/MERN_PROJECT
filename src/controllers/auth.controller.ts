@@ -131,7 +131,9 @@ export const changePassword = asyncHandler(
       throw new CustomError("password does not match", 400);
     }
 
-    user.password = new_password;
+    const newHashedPassword = await hashPassword(new_password);
+
+    user.password = newHashedPassword;
 
     await user.save();
 

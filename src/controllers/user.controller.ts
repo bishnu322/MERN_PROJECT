@@ -39,7 +39,7 @@ export const getAll = asyncHandler(async (req: Request, res: Response) => {
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const user = await User.findById(id);
+  const user = await User.findById(id).sort({ createdAt: -1 });
 
   if (!user) {
     throw new CustomError("User not found!", 400);
