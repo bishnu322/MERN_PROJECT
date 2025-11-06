@@ -29,7 +29,9 @@ export const createCart = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError("product not found", 404);
   }
 
-  const isAlreadyExist = cart.items.find((item) => item.product === productId);
+  const isAlreadyExist = cart.items.find(
+    (item) => item.product?.toString() === productId
+  );
 
   if (isAlreadyExist) {
     isAlreadyExist.quantity += Number(quantity);
@@ -37,6 +39,8 @@ export const createCart = asyncHandler(async (req: Request, res: Response) => {
       cart.total_amount -
       isAlreadyExist.total_price +
       isAlreadyExist.quantity * product.price;
+
+    isAlreadyExist.total_price = isAlreadyExist.quantity * product.price;
   } else {
     const total_price = Number(quantity) * product.price;
     const total_amount = cart.total_amount + total_price;
