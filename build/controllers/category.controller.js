@@ -45,18 +45,25 @@ exports.getAllCategory = (0, async_handler_utils_1.asyncHandler)((req, res) => _
     const limit = Number(per_page) || 10;
     const skip = (page - 1) * limit;
     if (query) {
-        filter.$or = {
-            name: {
-                $regex: query,
-                $options: "i",
+        filter.$or = [
+            {
+                name: {
+                    $regex: query,
+                    $options: "i",
+                },
             },
-            description: {
-                $regex: query,
-                $options: "i",
+            {
+                description: {
+                    $regex: query,
+                    $options: "i",
+                },
             },
-        };
+        ];
     }
-    const category = yield category_models_1.default.find(filter).limit(limit).skip(skip);
+    const category = yield category_models_1.default.find(filter)
+        .limit(limit)
+        .skip(skip)
+        .sort({ createdAt: -1 });
     const total = yield category_models_1.default.countDocuments(filter);
     const { total_page, next_page, pre_page, has_next_page, has_pre_page } = yield (0, pagination_utils_1.pagination)(page, limit, total);
     res.status(200).json({

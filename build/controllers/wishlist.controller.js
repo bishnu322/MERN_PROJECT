@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearWishList = exports.addToWishLit = exports.getWishList = void 0;
+exports.clearWishList = exports.removeWishlist = exports.addToWishLit = exports.getWishList = void 0;
 const async_handler_utils_1 = require("../utils/async-handler.utils");
 const user_models_1 = require("../models/user.models");
 const error_handler_middleware_1 = require("../middlewares/error-handler.middleware");
@@ -18,7 +18,7 @@ const product_models_1 = require("../models/product.models");
 exports.getWishList = (0, async_handler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userId = req.user._id;
-    const user = yield user_models_1.User.findById(userId).populate("wish_list.product");
+    const user = yield user_models_1.User.findById(userId).populate("wish_list");
     if (!user) {
         throw new error_handler_middleware_1.CustomError("wishList not found!", 404);
     }
@@ -31,34 +31,60 @@ exports.getWishList = (0, async_handler_utils_1.asyncHandler)((req, res) => __aw
 }));
 //add wishlist
 exports.addToWishLit = (0, async_handler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const productId = req.body;
+    const productId = req.body._id;
     const userId = req.user._id;
     if (!productId) {
-        throw new error_handler_middleware_1.CustomError("product id is required !", 400);
+        throw new error_handler_middleware_1.CustomError("product id is required!", 400);
     }
-    const product = yield product_models_1.Product.findById(productId.id);
-    // console.log(product);
+    // check product exists
+    const product = yield product_models_1.Product.findById(productId);
     if (!product) {
         throw new error_handler_middleware_1.CustomError("product not found!", 404);
     }
     const user = yield user_models_1.User.findById(userId);
-    let isProductAlreadyExists = user === null || user === void 0 ? void 0 : user.wish_list.find((id) => product._id.toString() === id.toString());
-    if (isProductAlreadyExists) {
-        let list = user === null || user === void 0 ? void 0 : user.wish_list.filter((id) => product.id.toString !== id.toString());
-        yield (user === null || user === void 0 ? void 0 : user.set("wish_list", list));
+    if (!user) {
+        throw new error_handler_middleware_1.CustomError("user not found!", 404);
+    }
+    // check if product already exists in wishlist
+    const exists = user.wish_list.some((id) => id.toString() === product._id.toString());
+    if (exists) {
+        // if product already exists
         return res.status(200).json({
-            message: "product removed to wish_list",
-            status: "Success",
+            message: "product already exist in wishlist",
             success: true,
+            data: user.wish_list,
         });
     }
-    user === null || user === void 0 ? void 0 : user.wish_list.push(product._id);
-    yield (user === null || user === void 0 ? void 0 : user.save());
-    res.status(200).json({
-        message: "product added to wish_list",
+    else {
+        // add product
+        user.wish_list.push(product._id);
+        yield user.save();
+        return res.status(200).json({
+            message: "product added to wishlist",
+            success: true,
+            data: user.wish_list,
+        });
+    }
+}));
+// remove product from wishlist
+exports.removeWishlist = (0, async_handler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const productId = req.body._id;
+    const userId = req.user._id;
+    if (!productId) {
+        throw new error_handler_middleware_1.CustomError("product id is required! ", 401);
+    }
+    const user = yield user_models_1.User.findById(userId);
+    if (!user) {
+        throw new error_handler_middleware_1.CustomError("User doesn't exist", 401);
+    }
+    const wishlist = user.wish_list.filter((id) => id.toString() !== productId.toString());
+    user.wish_list = wishlist;
+    yield user.save();
+    return res.status(200).json({
+        message: "product removed from wishlist",
         status: "Success",
         success: true,
-        data: user === null || user === void 0 ? void 0 : user.wish_list,
+        data: wishlist,
     });
 }));
 //clear wishlist

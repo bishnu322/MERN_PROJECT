@@ -41,7 +41,7 @@ exports.getAll = (0, async_handler_utils_1.asyncHandler)((req, res) => __awaiter
 // get by id
 exports.getById = (0, async_handler_utils_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const user = yield user_models_1.User.findById(id);
+    const user = yield user_models_1.User.findById(id).sort({ createdAt: -1 });
     if (!user) {
         throw new error_handler_middleware_1.CustomError("User not found!", 400);
     }

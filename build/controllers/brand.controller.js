@@ -79,7 +79,10 @@ exports.getAllBrand = (0, async_handler_utils_1.asyncHandler)((req, res) => __aw
     if (category) {
         filter.category = category;
     }
-    const brand = yield brand_models_1.Brand.find(filter).limit(limit).skip(skip);
+    const brand = yield brand_models_1.Brand.find(filter)
+        .limit(limit)
+        .skip(skip)
+        .sort({ createdAt: -1 });
     const total = yield brand_models_1.Brand.countDocuments(filter);
     const { total_page, next_page, pre_page, has_next_page, has_pre_page } = yield (0, pagination_utils_1.pagination)(page, limit, total);
     res.status(200).json({
@@ -104,7 +107,7 @@ exports.updateBrand = (0, async_handler_utils_1.asyncHandler)((req, res) => __aw
     if (!id) {
         throw new error_handler_middleware_1.CustomError("brand not found !", 400);
     }
-    const brand = yield brand_models_1.Brand.findById(id).populate("category");
+    const brand = yield brand_models_1.Brand.findById(id);
     if (!brand)
         throw new error_handler_middleware_1.CustomError("brand_name is required", 404);
     if (brand_name)

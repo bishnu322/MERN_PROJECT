@@ -131,7 +131,8 @@ exports.getAllProduct = (0, async_handler_utils_1.asyncHandler)((req, res) => __
         .populate("category")
         .populate("createdBy")
         .limit(limit)
-        .skip(skip);
+        .skip(skip)
+        .sort({ createdAt: -1 });
     const total = yield product_models_1.Product.countDocuments(filter);
     const { total_page, next_page, pre_page, has_next_page, has_pre_page } = yield (0, pagination_utils_1.pagination)(page, limit, total);
     res.status(200).json({
@@ -201,17 +202,15 @@ exports.updateProduct = (0, async_handler_utils_1.asyncHandler)((req, res) => __
     }
     if (brand) {
         const brandToUpdate = yield brand_models_1.Brand.findById(brand);
-        if (!brandToUpdate) {
-            throw new error_handler_middleware_1.CustomError("brand not found", 404);
+        if (brandToUpdate) {
+            product.brand = brandToUpdate._id;
         }
-        product.brand = brandToUpdate._id;
     }
     if (category) {
         const categoryToUpdate = yield brand_models_1.Brand.findById(category);
-        if (!categoryToUpdate) {
-            throw new error_handler_middleware_1.CustomError("brand not found", 404);
+        if (categoryToUpdate) {
+            product.category = categoryToUpdate._id;
         }
-        product.category = categoryToUpdate._id;
     }
     if (createdBy) {
         const createdByToUpdate = yield user_models_1.User.findById(createdBy);
@@ -253,6 +252,7 @@ exports.updateProduct = (0, async_handler_utils_1.asyncHandler)((req, res) => __
         const newImages = yield Promise.all(images.map((image) => __awaiter(void 0, void 0, void 0, function* () { return yield (0, cloudinary_service_utils_1.uploadFile)(image.path, folder_name); })));
         product.set("images", [...product.images, ...newImages]);
     }
+    product.save();
     res.status(200).json({
         message: "product updated successfully",
         status: "Success",

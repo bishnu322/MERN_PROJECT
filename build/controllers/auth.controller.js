@@ -78,33 +78,13 @@ exports.login = (0, async_handler_utils_1.asyncHandler)((req, res) => __awaiter(
         last_name: user.last_name,
     };
     const access_token = (0, jwt_utils_1.generateToken)(payload);
-    // const date = new Date();
-    // const IndTimeZone = date.toLocaleString("en-IN");
-    //   const html = `
-    //   <html >
-    //     <body>
-    //      <div style="background-color:#3572DE; text-align: center; padding: 10px; font-size:20px; color: #fff; font-weight: 800">New device logged in detected !</div>
-    //       <div style="background: #35DE8F; height: 20em">
-    //       <div style="text-align:center; padding: 15px">We noticed a login from a device you don't usually use</div>
-    //       <div style="text-align:center">Device ip address: ${req.ip}</div>
-    //       <div style="text-align:center">Date & Time: ${IndTimeZone}</div>
-    //       <div style="text-align:center">If this wasn't you,you can secure your account, from a device you have logged in with the past</div>
-    //     </div>
-    //   </>
-    // </body>
-    // </html>
-    //   `;
-    //   await sendEmail({
-    //     to: "bitinningclips@gmail.com",
-    //     subject: "Successfully logged in",
-    //     html: html,
-    //   });
     const _b = user._doc, { password: pass } = _b, loggedInUser = __rest(_b, ["password"]);
     res
         .cookie("access_token", access_token, {
         secure: process.env.NODE_ENV === "development" ? false : true,
         httpOnly: true,
         maxAge: Number(process.env.COOKIE_EXPIRY) * 24 * 60 * 60 * 1000,
+        sameSite: "lax",
     })
         .status(200)
         .json({
@@ -140,7 +120,8 @@ exports.changePassword = (0, async_handler_utils_1.asyncHandler)((req, res) => _
     if (!isPasswordMatch) {
         throw new error_handler_middleware_1.CustomError("password does not match", 400);
     }
-    user.password = new_password;
+    const newHashedPassword = yield (0, bcrypt_utils_1.hashPassword)(new_password);
+    user.password = newHashedPassword;
     yield user.save();
     res.status(201).json({
         message: "password changed successfully",
