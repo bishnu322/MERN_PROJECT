@@ -33,6 +33,9 @@ app.use(
     origin: [
       "http://localhost:5173", // your dev frontend
       "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app", // your deployed frontend
+      "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app/",
+      "https://www.mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app/",
+      "https://www.mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app",
       "https://welcomeshringar.com",
     ],
     credentials: true, // allow cookies
