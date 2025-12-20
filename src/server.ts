@@ -32,7 +32,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // your dev frontend
-      "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app/", // your deployed frontend
+      "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app", // your deployed frontend
       "https://welcomeshringar.com",
     ],
     credentials: true, // allow cookies
