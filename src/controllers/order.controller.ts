@@ -20,8 +20,8 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     throw new CustomError("shipping_address required", 400);
   }
 
-  const address = JSON.parse(shipping_address);
-  const orderItems: { product: string; quantity: string }[] = JSON.parse(items);
+  const address = shipping_address;
+  const orderItems: { product: string; quantity: string }[] = items;
 
   // *  preparing order items  with price
   const order = await Promise.all(
@@ -136,7 +136,7 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   });
 
   res.status(201).json({
-    message: "order placed",
+    message: "order confirmed",
     data: newOrder,
     success: true,
     status: "success",
@@ -147,7 +147,10 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
 //* get all orders (only admin)
 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
-  const orders = await Order.find({}).sort({ createdAt: -1 });
+  const orders = await Order.find({})
+    .sort({ createdAt: -1 })
+    .populate("user")
+    .populate("items.product");
 
   res.status(200).json({
     message: "All order fetched",
@@ -162,7 +165,10 @@ export const getAllByUser = asyncHandler(
   async (req: Request, res: Response) => {
     const user = req.user._id;
 
-    const orders = await Order.find({ user }).sort({ createdAt: -1 });
+    const orders = await Order.find({ user })
+      .sort({ createdAt: -1 })
+      .populate("user")
+      .populate("items.product");
 
     res.status(200).json({
       message: "All order fetched",

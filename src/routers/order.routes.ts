@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware";
-import { allAdmin, users } from "../types/global.types";
+import { allAdmin, allAdminAndUser, users } from "../types/global.types";
 import {
   cancel,
   createOrder,
@@ -11,9 +11,9 @@ import {
 
 const router = express.Router();
 
-router.post("/", authenticate(users), createOrder);
+router.post("/", authenticate(allAdminAndUser), createOrder);
 router.get("/all", authenticate(allAdmin), getAll);
-router.get("/", authenticate(users), getAllByUser);
+router.get("/", authenticate(allAdminAndUser), getAllByUser);
 router.put("/", authenticate(allAdmin), updateStatus);
 router.put("/cancel", authenticate(users), cancel);
 
