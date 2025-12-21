@@ -27,10 +27,15 @@ const DB_URI = (_a = process.env.DB_URI) !== null && _a !== void 0 ? _a : "";
 app.set("trust proxy", 1);
 app.use((0, cors_1.default)({
     origin: [
-        "http://localhost:5173", // your dev frontend
-        "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app", // your deployed frontend
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://mern-kart-client.vercel.app", // ✅ ADD THIS - Production URL
+        "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app",
+        "https://mern-kart-client-git-main-bishnu-kohars-projects.vercel.app",
         "https://www.mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app",
+        "https://www.mern-kart-client-git-main-bishnu-kohars-projects.vercel.app",
         "https://welcomeshringar.com",
+        "https://www.welcomeshringar.com",
     ],
     credentials: true, // allow cookies
 }));
