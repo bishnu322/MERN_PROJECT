@@ -25,21 +25,13 @@ const DB_URI = (_a = process.env.DB_URI) !== null && _a !== void 0 ? _a : "";
 //* calling database connection
 (0, db_config_1.DB_CONNECTION)(DB_URI);
 app.set("trust proxy", 1);
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:5173", // your dev frontend
-//       "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app", // your deployed frontend
-//       "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app/",
-//       "https://www.mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app/",
-//       "https://www.mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app",
-//       "https://welcomeshringar.com",
-//     ],
-//     credentials: true, // allow cookies
-//   })
-// );
 app.use((0, cors_1.default)({
-    origin: "*",
+    origin: [
+        "http://localhost:5173", // your dev frontend
+        "https://mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app", // your deployed frontend
+        "https://www.mern-kart-client-git-dev-bishnu-kohars-projects.vercel.app",
+        "https://welcomeshringar.com",
+    ],
     credentials: true, // allow cookies
 }));
 //*  Using middlewares
