@@ -80,10 +80,10 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   res
     .cookie("access_token", access_token, {
-      secure: process.env.NODE_ENV === "development" ? false : true,
+      secure: true,
       httpOnly: true,
       maxAge: Number(process.env.COOKIE_EXPIRY) * 24 * 60 * 60 * 1000,
-      sameSite: "lax",
+      sameSite: "none",
     })
     .status(200)
     .json({
