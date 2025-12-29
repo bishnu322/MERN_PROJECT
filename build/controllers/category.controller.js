@@ -42,7 +42,7 @@ exports.getAllCategory = (0, async_handler_utils_1.asyncHandler)((req, res) => _
     const { current_page, per_page, query } = req.query;
     const filter = {};
     const page = Number(current_page) || 1;
-    const limit = Number(per_page) || 10;
+    const limit = Number(per_page) || 30;
     const skip = (page - 1) * limit;
     if (query) {
         filter.$or = [
@@ -61,6 +61,7 @@ exports.getAllCategory = (0, async_handler_utils_1.asyncHandler)((req, res) => _
         ];
     }
     const category = yield category_models_1.default.find(filter)
+        .lean()
         .limit(limit)
         .skip(skip)
         .sort({ createdAt: -1 });
@@ -72,6 +73,7 @@ exports.getAllCategory = (0, async_handler_utils_1.asyncHandler)((req, res) => _
         success: true,
         data: category,
         pagination: {
+            total,
             total_page,
             next_page,
             pre_page,
