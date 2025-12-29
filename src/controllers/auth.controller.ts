@@ -152,7 +152,7 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
     .clearCookie("access_token", {
       secure: process.env.NODE_ENV === "development" ? false : true,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
     })
     .status(200)
     .json({
