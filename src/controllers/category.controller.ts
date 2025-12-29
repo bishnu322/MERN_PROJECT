@@ -61,6 +61,7 @@ export const getAllCategory = asyncHandler(
     }
 
     const category = await Category.find(filter)
+      .lean()
       .limit(limit)
       .skip(skip)
       .sort({ createdAt: -1 });
@@ -76,6 +77,7 @@ export const getAllCategory = asyncHandler(
       success: true,
       data: category,
       pagination: {
+        total,
         total_page,
         next_page,
         pre_page,
