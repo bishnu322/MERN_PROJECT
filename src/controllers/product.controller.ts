@@ -45,22 +45,31 @@ export const registerProduct = asyncHandler(
       size,
     });
 
-    const { cover_img, images } = req.files as {
-      [fieldname: string]: Express.Multer.File[];
+    // handle uploaded files safely
+    const files = (req.files || {}) as {
+      cover_img?: Express.Multer.File[];
+      images?: Express.Multer.File[];
     };
 
-    if (cover_img) {
-      const { path, public_id } = await uploadFile(
-        cover_img[0].path,
-        folder_name
-      );
+    const { cover_img, images } = files;
 
-      product.cover_img = {
-        path,
-        public_id,
-      };
+    // 🔴 Ensure cover_img exists because schema requires it
+    if (!cover_img || cover_img.length === 0) {
+      throw new CustomError("cover_img is required", 400);
     }
 
+    // upload cover image
+    const { path, public_id } = await uploadFile(
+      cover_img[0].path,
+      folder_name
+    );
+
+    product.cover_img = {
+      path,
+      public_id,
+    };
+
+    // upload additional images if present
     if (Array.isArray(images) && images.length > 0) {
       const imagePaths = images.map(async (newImg) => {
         return await uploadFile(newImg.path, folder_name);
@@ -70,14 +79,13 @@ export const registerProduct = asyncHandler(
       product.set("images", newImages);
     }
 
+    // validate brand and category
     const productBrand = await Brand.findById(brand);
-
     if (!productBrand) {
       throw new CustomError("Brand not found!", 404);
     }
 
     const productCategory = await Category.findById(category);
-
     if (!productCategory) {
       throw new CustomError("Product category not found!", 404);
     }
